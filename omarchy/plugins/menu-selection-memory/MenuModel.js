@@ -1,4 +1,4 @@
-// 用途  从 Omarchy 4.5.0 克隆的菜单解析、匹配和行模型，供 Menu.qml 使用。
+// Menu parsing, matching and row model for Menu.qml, derived from Omarchy 4.5.0.
 
 function stripJsonc(raw) {
   return String(raw || "")

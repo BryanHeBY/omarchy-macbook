@@ -45,26 +45,26 @@ while IFS=$'\t' read -r source destination; do
   # The manifest can only name repository content and relative user config paths.
   if [[ $source == /* || $source == *..* || $destination != .config/* || $destination == *..* ]] ||
      [[ ! -e $repo_root/$source ]]; then
-    printf '无效的软链接条目  %s -> %s\n' "$source" "$destination" >&2
+    printf 'Invalid symlink entry  %s -> %s\n' "$source" "$destination" >&2
     exit 1
   fi
   target="$task_home/$destination"
   if [[ -L $target && $(readlink -f -- "$target") == "$repo_root/$source" ]]; then
-    printf '已接入  %s\n' "$destination"
+    printf 'Already integrated  %s\n' "$destination"
     continue
   fi
-  printf '待接入  %s -> %s\n' "$destination" "$source"
+  printf 'Pending link  %s -> %s\n' "$destination" "$source"
   sources+=("$source")
   destinations+=("$destination")
 done < "$repo_root/install/symlinks.tsv"
 
 if [[ $mode == dry-run || ${#sources[@]} == 0 ]]; then
-  printf '检查完成，待建立软链接数为 %s。\n' "${#sources[@]}"
+  printf 'Preflight complete. Pending symlinks: %s.\n' "${#sources[@]}"
   exit 0
 fi
 
 backup_dir=$(mktemp -d "$backup_parent/install.XXXXXX")
-printf '配置备份  %s\n' "$backup_dir"
+printf 'Configuration backup  %s\n' "$backup_dir"
 touched=()
 rollback() {
   local status=$1
@@ -83,7 +83,7 @@ rollback() {
       fi
     fi
   done
-  printf '安装中断，已尝试恢复本次触及的配置。备份位于 %s\n' "$backup_dir" >&2
+  printf 'Installation interrupted. Recovery attempted for touched entries. Backups: %s\n' "$backup_dir" >&2
   exit "$status"
 }
 trap 'rollback $?' ERR
@@ -102,4 +102,4 @@ for index in "${!sources[@]}"; do
   ln -sT -- "$repo_root/${sources[index]}" "$target"
 done
 trap - ERR INT TERM
-echo '软链接已接入。按 README 选择需要启用的模块和插件。'
+echo 'Symlinks installed. Follow the README to enable the desired modules and plugins.'

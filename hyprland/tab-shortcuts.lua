@@ -1,13 +1,13 @@
--- Super+W 关闭当前标签或文档，Super+T 新建标签或空白文档。
--- 按应用的 Linux 原生快捷键转发，由应用处理焦点、保存提示和最后一个标签。
+-- Super+W closes the current tab or document; Super+T creates a tab or blank document.
+-- Forward native Linux shortcuts so each app handles focus, save prompts and its last tab.
 local tab_keys = { mods = "CTRL", close = "W", new_tab = "T" }
 local document_keys = { mods = "CTRL", close = "W", new_tab = "N" }
 local terminal_keys = { mods = "CTRL SHIFT", close = "W", new_tab = "T" }
--- Kitty 的 Ctrl+Shift+Q 关闭整个标签，Ctrl+Shift+W 关闭当前分屏。
+-- Kitty uses Ctrl+Shift+Q to close a tab and Ctrl+Shift+W to close the current split.
 local kitty_keys = { mods = "CTRL SHIFT", close = "Q", new_tab = "T" }
 
--- 使用精确窗口类，避免将 Electron 应用或所有终端统一当作多标签应用。
--- 新应用可以按其默认快捷键加入对应分组，窗口类可用 hyprctl clients 查询。
+-- Match exact window classes to distinguish Electron editors and terminal tab support.
+-- Add apps to the group matching their default shortcuts; inspect classes with hyprctl clients.
 local shortcuts_by_class = {
   ["org.gnome.nautilus"] = tab_keys,
   ["nautilus"] = tab_keys,
@@ -59,7 +59,7 @@ local function shortcuts_for(window)
   local shortcuts = shortcuts_by_class[(window.class or ""):lower()]
   if shortcuts then return shortcuts end
 
-  -- Omarchy 为浏览器提供动态标签，其名称可能带有结尾的星号。
+  -- Omarchy supplies dynamic browser tags whose names may end with an asterisk.
   for _, tag in ipairs(window.tags or {}) do
     tag = tag:gsub("%*$", "")
     if tag == "chromium-based-browser" or tag == "firefox-based-browser" then
@@ -70,7 +70,7 @@ end
 
 local function send_shortcut(window, shortcuts, key)
   local target = "address:" .. window.address
-  -- 明确发送按下和抬起，沿用 Omarchy 的剪贴板快捷键模式。
+  -- Send explicit key-down and key-up events, following Omarchy clipboard shortcut handling.
   hl.dispatch(hl.dsp.send_key_state({ mods = shortcuts.mods, key = key, state = "down", window = target }))
   hl.timer(function()
     hl.dispatch(hl.dsp.send_key_state({ mods = shortcuts.mods, key = key, state = "up", window = target }))

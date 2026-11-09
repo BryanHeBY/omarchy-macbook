@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# 检查或应用本仓库的局部配置补丁，保留用户配置中的其他设置。
-# 默认只读检查。--apply 写入前备份，执行失败时恢复本次触及的文件。
-# 软链接和 Shell 插件接入方式见 README。
+# Check or apply scoped configuration patches while preserving unrelated user settings.
+# Default to a read-only preview. --apply backs up targets and restores touched files on failure.
+# See the README for symlink installation and shell plugin integration.
 set -Eeuo pipefail
 
 repo_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
@@ -13,12 +13,12 @@ usage() {
   cat <<'HELP'
 Usage: scripts/apply-patches.sh [--dry-run | --apply] [--only hyprland | fcitx5 | display]
 
-  --dry-run   检查补丁状态，默认模式
-  --apply     备份后应用尚未生效的补丁
-  --only      只处理指定部分，默认处理 hyprland 和 fcitx5
-              display 为精确分数缩放的独立可选补丁
+  --dry-run   Check patch status (default)
+  --apply     Back up targets and apply pending patches
+  --only      Process one section; defaults to hyprland and fcitx5
+              display is a separate opt-in patch for exact fractional scaling
 
-Hyprland 实际应用前，需要按 install/symlinks.tsv 接入 customizations 目录。
+Before applying Hyprland patches, link customizations as listed in install/symlinks.tsv.
 HELP
 }
 
@@ -36,7 +36,7 @@ while (( $# > 0 )); do
   esac
 done
 
-command -v patch >/dev/null || { echo '缺少 patch 命令。' >&2; exit 1; }
+command -v patch >/dev/null || { echo 'The patch command is required.' >&2; exit 1; }
 patches=()
 if [[ $selection == all || $selection == hyprland ]]; then
   patches+=(patches/hyprland-input.patch patches/hyprland-bindings.patch patches/hyprland-looknfeel.patch)
@@ -74,30 +74,30 @@ loader_module() {
   esac
 }
 
-# 所有补丁先通过检查，避免遇到冲突后留下部分写入的配置。
+# Preflight every patch before writing so a conflict cannot leave a partially patched setup.
 for relative in "${patches[@]}"; do
   module=$(loader_module "$relative")
   target=$(patch_targets "$relative")
   loader_pattern="^[[:space:]]*require[[:space:]]*\\([[:space:]]*['\"]hypr\\.customizations\\.${module}['\"][[:space:]]*\\)[[:space:]]*;?[[:space:]]*(--.*)?$"
   if [[ -n $module ]] && grep -Eq "$loader_pattern" "$task_home/$target"; then
-    printf '已接入  %s\n' "$relative"
+    printf 'Already integrated  %s\n' "$relative"
   elif output=$(run_patch "$relative" --forward --dry-run 2>&1); then
-    printf '待应用  %s\n' "$relative"
+    printf 'Pending patch  %s\n' "$relative"
     pending+=("$relative")
   elif run_patch "$relative" --reverse --dry-run >/dev/null 2>&1; then
-    printf '已应用  %s\n' "$relative"
+    printf 'Already applied  %s\n' "$relative"
   else
-    printf '补丁与目标配置存在冲突  %s\n%s\n' "$relative" "$output" >&2
+    printf 'Patch conflicts with target configuration  %s\n%s\n' "$relative" "$output" >&2
     exit 1
   fi
 done
 
 if [[ $mode == dry-run ]]; then
-  printf '检查完成，待应用补丁数为 %s。\n' "${#pending[@]}"
+  printf 'Preflight complete. Pending patches: %s.\n' "${#pending[@]}"
   exit 0
 fi
 if (( ${#pending[@]} == 0 )); then
-  echo '所选补丁已经生效。'
+  echo 'All selected patches are already active.'
   exit 0
 fi
 
@@ -107,13 +107,13 @@ for relative in "${pending[@]}"; do
     expected="$repo_root/hyprland/$module.lua"
     actual="$task_home/.config/hypr/customizations/$module.lua"
     if [[ ! -f $actual ]] || [[ $(realpath -- "$actual") != "$expected" ]]; then
-      echo '请先按 install/symlinks.tsv 接入 ~/.config/hypr/customizations。' >&2
+      echo 'First link ~/.config/hypr/customizations as listed in install/symlinks.tsv.' >&2
       exit 1
     fi
   fi
   while IFS= read -r target; do
     if [[ ! -f $task_home/$target || -L $task_home/$target ]]; then
-      printf '补丁目标需要是普通配置文件  %s\n' "$task_home/$target" >&2
+      printf 'Patch target must be a regular configuration file  %s\n' "$task_home/$target" >&2
       exit 1
     fi
   done < <(patch_targets "$relative")
@@ -129,7 +129,7 @@ for relative in "${pending[@]}"; do
   done < <(patch_targets "$relative")
 done
 
-printf '配置备份  %s\n' "$backup_dir"
+printf 'Configuration backup  %s\n' "$backup_dir"
 touched=()
 rollback() {
   local status=$1
@@ -137,7 +137,7 @@ rollback() {
   for target in "${touched[@]}"; do
     cp -a -- "$backup_dir/$target" "$task_home/$target" || true
   done
-  printf '应用中断，已尝试恢复本次触及的文件。备份位于 %s\n' "$backup_dir" >&2
+  printf 'Patch application interrupted. Recovery attempted for touched files. Backups: %s\n' "$backup_dir" >&2
   exit "$status"
 }
 trap 'rollback $?' ERR
@@ -149,7 +149,7 @@ for relative in "${pending[@]}"; do
     touched+=("$target")
   done < <(patch_targets "$relative")
   run_patch "$relative" --forward
-  printf '已完成  %s\n' "$relative"
+  printf 'Applied  %s\n' "$relative"
 done
 trap - ERR INT TERM
-echo '补丁应用完成。按 README 的对应部分执行重载命令。'
+echo 'Patches applied. Run the reload commands in the corresponding README section.'

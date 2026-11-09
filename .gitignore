@@ -1,11 +1,11 @@
-# Python 执行缓存和编辑器临时文件。
+# Python bytecode caches and temporary editor files.
 __pycache__/
 *.pyc
 *~
 *.bak
 *.bak.*
 
-# 凭据和本地会话数据使用其各自的私有目录。
+# Credentials and local session data belong in their private directories.
 .env
 .env.*
 id_rsa*

@@ -1,5 +1,5 @@
 #!/bin/bash
-# 用途  锁屏视频背景单帧缓存脚本，供保留的背景显示功能调用。
+# Cache a single poster frame for the lock screen video background.
 
 
 # One cached frame shared by all lock outputs, including when OWE is paused.

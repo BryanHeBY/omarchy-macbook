@@ -1,5 +1,5 @@
--- 使用 Lua 桩验证应用分组、按键转发、窗口回退和异步按键释放。
--- 执行方式  lua tests/tab-shortcuts.lua
+-- Use Lua stubs to test app groups, key forwarding, window fallback and asynchronous key release.
+-- Run with lua tests/tab-shortcuts.lua.
 local directory = arg[0]:match("^(.*)/") or "."
 local callbacks, events, timers = {}, {}, {}
 local active_window = nil
@@ -61,7 +61,7 @@ end
 check("kitty", {}, "CTRL SHIFT", "Q", "T")
 check("browser", { "chromium-based-browser*" }, "CTRL", "W", "T")
 check("browser", { "firefox-based-browser" }, "CTRL", "W", "T")
--- 精确应用规则优先于浏览器标签，Electron 编辑器仍使用新建文档动作。
+-- Exact app rules take precedence over browser tags so Electron editors create documents.
 check("com.microsoft.VSCode", { "chromium-based-browser*" }, "CTRL", "W", "N")
 check("foot", { "terminal*" }, nil, nil, nil)
 check("Alacritty", { "terminal" }, nil, nil, nil)

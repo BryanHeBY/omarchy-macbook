@@ -1,4 +1,4 @@
-// 用途  锁屏服务使用的指纹状态、重试和恢复模型。
+// Fingerprint state, retry and recovery model used by the lock service.
 
 // Back off missing prompts and fast device errors; ordinary mismatches
 // and a full scan window without a finger keep the normal swipe interval.

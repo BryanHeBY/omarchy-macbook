@@ -1,5 +1,7 @@
 # manifest.json
 
-`passwordless-lock` 的插件清单，登记显示名称、版本、能力和加载入口。Dismiss the lock screen with a click or any key.
+The `passwordless-lock` manifest declares the display name, version, capabilities
+and entry points. The plugin dismisses the lock screen with a click or any key.
 
-`clonedFrom` 指向 `omarchy.lock`，用于 Omarchy 的插件替换和内置路由解析。严格 JSON 的说明保存在此配套文档中。
+`clonedFrom` points to `omarchy.lock` for Omarchy plugin replacement and built-in
+route resolution. This companion file documents the strict JSON manifest.

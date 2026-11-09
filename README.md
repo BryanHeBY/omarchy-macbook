@@ -1,113 +1,156 @@
 # Omarchy Configs
 
-面向 Omarchy 的模块化桌面定制，提供工作区手势、动画、标签页快捷键、中文字体、输入法热键和 Shell 插件。配置通过软链接和局部补丁接入，各部分可以分别选用。
+[简体中文](README.zh-CN.md)
 
-## 功能
+Modular desktop customizations for Omarchy: workspace gestures, animations,
+application-aware tab shortcuts, Chinese fonts, input-method hotkeys and shell
+plugins. Symlinks and scoped patches let you select each component independently.
 
-| 部分 | 效果 | 文件 |
+## Features
+
+| Component | Behavior | Source |
 | --- | --- | --- |
-| 工作区手势 | 三指或四指横滑触发一次切换，支持空工作区 | `hyprland/workspace-gestures.lua` |
-| 窗口焦点手势 | 多窗口平铺时，双指横滑循环切换焦点 | `hyprland/plugins/two-finger-focus/` |
-| 工作区动画 | 缓出曲线和滑动过渡 | `hyprland/workspace-animation.lua` |
-| 标签页快捷键 | `Super+W` 关闭标签或文档，`Super+T` 新建标签或文档 | `hyprland/tab-shortcuts.lua` |
-| 输入法热键 | 左 Shift 直接切换中英文 | `input-method/fcitx5-hotkeys.patch` |
-| 中文字体 | Sarasa UI SC、Sarasa Mono SC 和 Noto CJK 回退 | `fonts/chinese-fonts.conf` |
-| 显示面板 | 1×、1.25×、1.6×、1.8×、1.9×、2×、3× 缩放档位 | `omarchy/plugins/display-controls/` |
-| 系统托盘 | 图标置顶、显隐和应用点击动作，包含 Clash 快捷启动 | `omarchy/plugins/system-tray/` |
-| 菜单选择记忆 | 按菜单和搜索词记忆最近选择并置顶 | `omarchy/plugins/menu-selection-memory/` |
-| 免密锁屏 | 点击或任意按键直接进入桌面 | `omarchy/plugins/passwordless-lock/` |
+| Workspace gestures | One switch per three- or four-finger horizontal swipe, including empty workspaces | `hyprland/workspace-gestures.lua` |
+| Window focus gestures | Cycle focus with two-finger horizontal swipes among tiled windows | `hyprland/plugins/two-finger-focus/` |
+| Workspace animations | Ease-out curve with slide transitions | `hyprland/workspace-animation.lua` |
+| Tab shortcuts | `Super+W` closes a tab or document; `Super+T` creates one | `hyprland/tab-shortcuts.lua` |
+| Input-method hotkeys | Left Shift directly toggles Chinese and English input | `input-method/fcitx5-hotkeys.patch` |
+| Chinese fonts | Sarasa UI SC, Sarasa Mono SC and Noto CJK fallbacks | `fonts/chinese-fonts.conf` |
+| Display controls | Scale presets of 1×, 1.25×, 1.6×, 1.8×, 1.9×, 2× and 3× | `omarchy/plugins/display-controls/` |
+| System tray | Pinning, visibility and activation, including Clash launch support | `omarchy/plugins/system-tray/` |
+| Menu selection memory | Promote the latest choice for each menu and search query | `omarchy/plugins/menu-selection-memory/` |
+| VS Code inertia | Standalone helper for continued editor scrolling after finger release | `scripts/configure-vscode-scroll.cjs` |
+| Passwordless lock | Enter the desktop with a click or any key | `omarchy/plugins/passwordless-lock/` |
 
-手势左滑进入下一个工作区，右滑进入上一个工作区。
+Swipe left to enter the next workspace and right to enter the previous workspace.
 
-### 双指窗口焦点切换
+### Two-finger window focus
 
-同一工作区有至少两个可见、可聚焦的平铺窗口，且指针位于平铺窗口内容上时，双指横滑按窗口从左到右、同列从上到下的顺序循环切换焦点。每次滑动最多切换一次，抬手后可以再次切换。
+When a workspace has at least two visible, focusable tiled windows and the pointer
+is over tiled window content, a two-finger horizontal swipe cycles focus. Windows
+are ordered left to right, then top to bottom within a column. Each gesture
+switches at most once; lifting your fingers permits another switch.
 
-单窗口、浮动窗口、全屏、锁屏和按住修饰键时，滚动交给应用处理。纵向滚动和鼠标滚轮同样由应用处理。三指、四指继续切换工作区。
+Scrolling is passed to applications with a single window, a floating window,
+fullscreen mode, a locked session or held modifiers. Vertical scrolling and mouse
+wheel events are also passed through. Three- and four-finger gestures continue to
+switch workspaces.
 
-该功能通过可选的原生 Hyprland 插件接管触控板横向滚动。识别阈值为累计 18 个输入单位，横向位移需达到纵向位移的 1.5 倍。阈值位于 `hyprland/plugins/two-finger-focus/GestureState.hpp`。正常序列在抬手时结束，超过 400ms 没有滚动事件时也会重置，以恢复缺失结束事件的输入序列。
+This optional native Hyprland plugin handles touchpad horizontal scrolling. Its
+threshold is 18 accumulated input units, with horizontal movement at least 1.5
+times the vertical movement. Thresholds live in
+`hyprland/plugins/two-finger-focus/GestureState.hpp`. A sequence normally ends on
+finger release; 400 ms without a scroll event also resets it to recover from a
+missing stop event.
 
-### 应用感知的标签页快捷键
+### Application-aware tab shortcuts
 
-| 应用 | `Super+W` 转发 | `Super+T` 转发 | 行为 |
+| Application | `Super+W` forwards | `Super+T` forwards | Behavior |
 | --- | --- | --- | --- |
-| Chromium、Firefox 系浏览器 | `Ctrl+W` | `Ctrl+T` | 关闭、新建浏览器标签 |
-| Nautilus、Dolphin、Thunar、Nemo、Obsidian | `Ctrl+W` | `Ctrl+T` | 关闭、新建标签 |
-| VS Code / Insiders、Code OSS、VSCodium、Cursor、Windsurf | `Ctrl+W` | `Ctrl+N` | 关闭当前编辑器、新建空白文档 |
-| Kate、KWrite、Gedit、Sublime Text | `Ctrl+W` | `Ctrl+N` | 关闭、新建文档 |
-| Konsole、GNOME Terminal、Xfce Terminal、WezTerm、Ghostty | `Ctrl+Shift+W` | `Ctrl+Shift+T` | 关闭当前终端标签或会话、新建标签 |
-| Kitty | `Ctrl+Shift+Q` | `Ctrl+Shift+T` | 关闭当前标签、新建标签 |
+| Chromium and Firefox browsers | `Ctrl+W` | `Ctrl+T` | Close or create a browser tab |
+| Nautilus, Dolphin, Thunar, Nemo, Obsidian | `Ctrl+W` | `Ctrl+T` | Close or create a tab |
+| VS Code / Insiders, Code OSS, VSCodium, Cursor, Windsurf | `Ctrl+W` | `Ctrl+N` | Close the current editor or create a blank document |
+| Kate, KWrite, Gedit, Sublime Text | `Ctrl+W` | `Ctrl+N` | Close or create a document |
+| Konsole, GNOME Terminal, Xfce Terminal, WezTerm, Ghostty | `Ctrl+Shift+W` | `Ctrl+Shift+T` | Close the current terminal tab or session; create a tab |
+| Kitty | `Ctrl+Shift+Q` | `Ctrl+Shift+T` | Close or create a tab |
 
-编辑器中的 `Super+T` 采用新建空白文档的约定。保存提示、最后一个标签及嵌入终端焦点的处理由应用原生快捷键决定。默认快捷键依据应用文档配置。[VS Code](https://code.visualstudio.com/docs/reference/default-keybindings)、[Konsole](https://docs.kde.org/stable_kf6/en/konsole/konsole/commandreference.html)、[Kitty](https://sw.kovidgoyal.net/kitty/invocation/)、[WezTerm](https://wezterm.org/config/default-keys.html)。
+In editors, `Super+T` follows the blank-document convention. Save prompts, the
+last tab and embedded-terminal focus follow each application's native shortcut
+behavior. The mappings follow application documentation:
+[VS Code](https://code.visualstudio.com/docs/reference/default-keybindings),
+[Konsole](https://docs.kde.org/stable_kf6/en/konsole/konsole/commandreference.html),
+[Kitty](https://sw.kovidgoyal.net/kitty/invocation/),
+[WezTerm](https://wezterm.org/config/default-keys.html).
 
-应用通过精确窗口类或 Omarchy 的浏览器标签识别，分组可在 `hyprland/tab-shortcuts.lua` 中扩展。其余应用的 `Super+W` 关闭窗口，`Super+T` 结束处理。Foot、Alacritty 使用这一组窗口行为。
+Applications are identified by exact window classes or Omarchy browser tags.
+Extend the groups in `hyprland/tab-shortcuts.lua`. For other applications,
+`Super+W` closes the window and `Super+T` performs no action. Foot and Alacritty
+use this fallback.
 
-## 环境与依赖
+## Requirements
 
-- Omarchy 4.5 的 Lua 配置和 Shell 插件接口。
-- Hyprland、Quickshell 及 Omarchy 提供的 `qs.Commons`、`qs.Ui` 组件。
-- 双指焦点插件针对 Hyprland 0.56.2，需要匹配运行版本的开发头文件、支持 C++26 的 G++ 和 pkg-config。
-- Bash、GNU patch、GNU coreutils、GNU awk、jq、util-linux（`flock`）和 Fontconfig。
-- 回归测试使用 Lua、Node.js 和 G++。
-- 输入法热键需要 Fcitx5。
-- 中文字体需要 `ttf-sarasa-gothic` 和 `noto-fonts-cjk`。
-- Clash 快捷启动需要提供 `/usr/bin/clash-verge` 的应用包。
-- 锁屏视频背景缩略图需要 `ffmpegthumbnailer` 和 `flock`。
+- Omarchy 4.5 Lua configuration and shell plugin interfaces.
+- Hyprland, Quickshell and Omarchy's `qs.Commons` and `qs.Ui` components.
+- The two-finger focus plugin targets Hyprland 0.56.2 and requires development
+  headers matching the running version, a C++26-capable G++ and pkg-config.
+- Bash, GNU patch, GNU coreutils, GNU awk, jq, util-linux (`flock`) and Fontconfig.
+- The VS Code scrolling helper requires Node.js 18 or newer and a VS Code version
+  supporting `editor.inertialScroll`.
+- Regression tests use Lua, Node.js and G++.
+- Fcitx5 for input-method hotkeys.
+- `ttf-sarasa-gothic` and `noto-fonts-cjk` for Chinese fonts.
+- An application package providing `/usr/bin/clash-verge` for the Clash shortcut.
+- `ffmpegthumbnailer` and `flock` for lock-screen video background posters.
 
-补丁基于 Omarchy 4.5 默认配置生成。遇到上下文冲突时，apply 脚本会停止并显示对应文件。
+Patches were generated against Omarchy 4.5 defaults. On a context conflict, the
+apply script stops and identifies the affected file.
 
-## 目录
+## Layout
 
 ```text
-fonts/                  中文字体规则
-hyprland/               Lua 模块与原生输入插件源码
-input-method/           Fcitx5 热键补丁
-install/symlinks.tsv     软链接清单
-omarchy/plugins/        Shell 插件及其完整本地依赖
+docs/vscode-scrolling.md Detailed VS Code inertia and recovery guide
+fonts/                  Chinese font rules
+hyprland/               Lua modules and native input plugin sources
+input-method/           Fcitx5 hotkey patch
+install/symlinks.tsv     Symlink manifest
+omarchy/plugins/        Shell plugins with their local dependencies
 omarchy/shell-integration.json
-                        插件接入的声明式参考
-patches/                Hyprland 模块加载补丁
+                        Declarative integration reference
+patches/                Hyprland module-loader patches
 scripts/install-links.sh
-                        软链接预检、备份和安装入口
+                        Symlink preflight, backup and installation
 scripts/apply-patches.sh
-                        补丁检查、备份和应用入口
+                        Patch checks, backups and application
 scripts/build-two-finger-focus.sh
-                        编译可选的双指焦点插件
-tests/tab-shortcuts.lua  应用感知快捷键的 Lua 回归测试
+                        Optional native focus plugin build
+scripts/configure-vscode-scroll.cjs
+                        Standalone VS Code inertia preview and configuration
+tests/tab-shortcuts.lua  Application-aware shortcut regression tests
 tests/two-finger-focus.cpp
-                        双指手势状态与滚动转发回归测试
+                        Gesture state and scroll forwarding tests
 tests/display-controls.cjs
-                        显示预设和缩放持久化回归测试
+                        Scale preset and persistence tests
 tests/install-scripts.cjs
-                        安装、备份、重复运行与失败恢复测试
+                        Installation, backups, idempotency and recovery tests
+tests/vscode-scrolling.cjs
+                        JSONC edits, backups, idempotency and disable tests
 ```
 
-插件内部文件名符合 Omarchy 加载器约定。严格 JSON 配有同名 `.md` 说明，其他源码使用对应格式的注释。
+Plugin filenames follow Omarchy loader conventions. Strict JSON files have
+companion `.md` documentation; other sources use comments in their native format.
 
-## 接入配置
+## Installation
 
-以下命令在仓库根目录执行。仓库可以放在任意目录，脚本通过自身位置解析源码路径，目标配置路径使用 `$HOME`。
+Run these commands from the repository root. The repository can live anywhere:
+scripts resolve sources relative to themselves and user configuration under
+`$HOME`. The standalone VS Code helper also respects `$XDG_CONFIG_HOME`.
 
-### 建立软链接
+### Install symlinks
 
-`install/symlinks.tsv` 的第一列相对仓库根目录，第二列相对 `$HOME`。可以选择清单中的部分条目接入。
+The first column in `install/symlinks.tsv` is relative to the repository root; the
+second is relative to `$HOME`. You can install selected groups independently.
 
 ```bash
-# 默认只读检查。确认计划后写入软链接。
+# Preview by default, then write the links.
 ./scripts/install-links.sh
 ./scripts/install-links.sh --apply
 
-# 也可只接入某类配置。
+# Select one configuration group.
 ./scripts/install-links.sh --dry-run --only hyprland
 ./scripts/install-links.sh --apply --only fonts
 ./scripts/install-links.sh --apply --only shell
 ```
 
-脚本先检查全部选中项，替换前将原文件、目录或软链接移入用户状态目录的独立备份目录。安装失败时尝试恢复本轮触及的条目。重复运行会跳过已经指向当前仓库的链接。安装器通过 `flock` 避免同时运行造成冲突。
+The installer preflights selected entries and moves replaced files, directories
+or symlinks into a separate backup directory under the user state directory. On
+failure it attempts to restore entries touched by the current invocation.
+Repeated runs skip links already pointing to this repository. `flock` serializes
+installers to avoid concurrent replacements.
 
-建立链接后，按下面的步骤选择模块与插件。精确分数缩放和免密锁屏分别启用。
+After linking, select modules and plugins using the steps below. Exact fractional
+scaling and passwordless locking require separate activation.
 
-| 仓库内容 | 加载位置 |
+| Repository content | Loaded from |
 | --- | --- |
 | `hyprland/` | `~/.config/hypr/customizations` |
 | `fonts/chinese-fonts.conf` | `~/.config/fontconfig/conf.d/50-omarchy-input-method.conf` |
@@ -116,56 +159,71 @@ tests/install-scripts.cjs
 | `omarchy/plugins/passwordless-lock/` | `~/.config/omarchy/plugins/passwordless-lock` |
 | `omarchy/plugins/display-controls/` | `~/.config/omarchy/plugins/display-controls` |
 
-### 应用模块加载与输入法补丁
+### Apply module-loader and input-method patches
 
 ```bash
-# 默认只读检查。
+# Read-only preview by default.
 ./scripts/apply-patches.sh
 
-# 备份后应用全部补丁。
+# Back up targets and apply the default patch set.
 ./scripts/apply-patches.sh --apply
 
-# 也可按部分检查和应用。
+# Check or apply an individual section.
 ./scripts/apply-patches.sh --dry-run --only hyprland
 ./scripts/apply-patches.sh --apply --only hyprland
 ./scripts/apply-patches.sh --apply --only fcitx5
 ```
 
-Hyprland 补丁分别在 `input.lua`、`bindings.lua`、`looknfeel.lua` 中接入对应模块。脚本识别已有的 `require(...)`，支持重复执行和部分接入。输入法补丁将 `Shift_L` 从 `AltTriggerKeys` 移入 `TriggerKeys`。
+Hyprland patches load modules from `input.lua`, `bindings.lua` and `looknfeel.lua`.
+The script recognizes existing `require(...)` calls, supports repeated runs and
+allows partial integration. The input-method patch moves `Shift_L` from
+`AltTriggerKeys` to `TriggerKeys`.
 
-补丁应用前会检查全部选中项，并确认 Lua 模块链接指向当前仓库。待修改文件备份到 `${XDG_STATE_HOME:-$HOME/.local/state}/omarchy-configs/patch-backups/`，执行失败时尝试恢复本次触及的文件。
+All selected patches are checked before writing, including verification that the
+Lua module link points to this repository. Targets are backed up under
+`${XDG_STATE_HOME:-$HOME/.local/state}/omarchy-configs/patch-backups/`. A failed
+application attempts to restore files touched by that invocation.
 
-### 接入 Shell 插件
+### Enable shell plugins
 
-建立插件链接后，通过 Omarchy 的克隆插件机制启用所需部分。
+After installing plugin links, activate the desired replacements through
+Omarchy's cloned-plugin mechanism.
 
 ```bash
 omarchy shell shell rescanPlugins
-# 发现插件是异步过程，确认所需插件已出现后再执行 enable。
+# Discovery is asynchronous. Confirm the plugins appear before enabling them.
 omarchy plugin list --json
 
 omarchy plugin enable menu-selection-memory
 omarchy plugin enable system-tray
-# 显示面板还需下文的 display 补丁。
+# Display controls also need the display patch described below.
 omarchy restart shell
 ```
 
-插件清单中的 `clonedFrom` 对应内置菜单、托盘、显示面板和锁屏入口，原有菜单快捷键通过该机制解析到选用的插件。`omarchy/shell-integration.json` 提供字段级参考，具体插件状态由 Omarchy CLI 写入用户的 Shell 配置。
+Manifest `clonedFrom` values identify built-in menu, tray, display and lock entry
+points, allowing existing routes and shortcuts to resolve to the selected clone.
+`omarchy/shell-integration.json` provides a field-level reference. Omarchy's CLI
+writes the actual plugin state into the user's shell configuration.
 
-`system-tray` 保留通用托盘管理。Clash 左键执行 `/usr/bin/clash-verge`，右键打开托盘菜单。需要常驻显示的图标可在托盘管理面板中置顶。
+`system-tray` provides general tray management. Left-clicking Clash runs
+`/usr/bin/clash-verge`; right-clicking opens its tray menu. Pin icons in the tray
+management panel to keep them visible.
 
-免密锁屏单独启用。启用后，点击或任意按键会直接解锁，具有本机操作权限的人可以直接进入会话。
+Passwordless locking is enabled separately. A click or any key unlocks the
+session, allowing anyone with physical access to enter it.
 
 ```bash
 omarchy plugin enable passwordless-lock
 omarchy restart shell
 ```
 
-## 生效与验证
+## Activation and verification
 
-### 手势、动画和标签页快捷键
+### Gestures, animations and tab shortcuts
 
-启用双指焦点切换前，先编译原生插件。`workspace-gestures.lua` 会加载可选的 `two-finger-focus.lua` 模块，后者发现编译产物后加载插件。
+Compile the native plugin before enabling two-finger focus switching.
+`workspace-gestures.lua` loads the optional `two-finger-focus.lua` module, which
+loads the plugin when its compiled library exists.
 
 ```bash
 ./scripts/build-two-finger-focus.sh
@@ -174,20 +232,21 @@ hyprctl plugin list
 hyprctl configerrors
 ```
 
-编译产物位于 `${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-configs/plugins/two-finger-focus.so`。Hyprland 升级后，需要用匹配的头文件重新编译。插件加载时校验版本和 ABI。修改插件源码并重新编译后，可卸载当前插件再重新加载配置。
+The library is installed at
+`${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-configs/plugins/two-finger-focus.so`.
+Rebuild against matching headers after Hyprland upgrades. The plugin checks the
+version and ABI on load. After rebuilding changed sources, unload and explicitly
+load the library before reloading configuration.
 
 ```bash
 hyprctl plugin unload "${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-configs/plugins/two-finger-focus.so"
 hyprctl plugin load "${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-configs/plugins/two-finger-focus.so"
 hyprctl reload
-```
-
-```bash
-hyprctl reload
 hyprctl configerrors
 ```
 
-验证三指和四指横滑、空工作区切换，以及匹配应用中的 `Super+W`、`Super+T`。快捷键分组可通过 Lua 回归测试检查。
+Check three- and four-finger horizontal swipes, empty workspaces, and `Super+W`
+and `Super+T` in supported applications. Test shortcut groups and gesture state:
 
 ```bash
 lua tests/tab-shortcuts.lua
@@ -195,28 +254,40 @@ g++ -std=c++20 -Wall -Wextra tests/two-finger-focus.cpp -o /tmp/test-two-finger-
 /tmp/test-two-finger-focus
 ```
 
-双指功能可在同一工作区打开两个平铺窗口验证横滑切换，再关闭其中一个验证应用横向滚动。多窗口时上下滚动应继续传入应用。
+Open two tiled windows on the same workspace to check two-finger focus switching,
+then close one to check application horizontal scrolling. Vertical scrolling
+should continue to reach applications with multiple windows.
 
-### 显示面板与精确分数缩放
+### Display controls and exact fractional scaling
 
-`display-controls` 替换内置显示面板，缩放按钮依次为 1×、1.25×、1.6×、1.8×、1.9×、2×、3×。亮度、文字大小和显示器管理沿用上游行为。1.8× 和 1.9× 保留请求值，显示面板和配套命令均使用精确分数缩放。
+`display-controls` replaces the built-in panel with presets of 1×, 1.25×, 1.6×,
+1.8×, 1.9×, 2× and 3×. Brightness, text size and monitor management follow upstream
+behavior. Both the panel and its helper preserve requested fractional scales.
 
-此功能需要单独启用 `hyprland/fractional-scaling.lua`。它设置 `debug.disable_scale_checks = true`，允许逻辑显示尺寸包含小数，可能出现像素对齐和舍入误差。该选项作用于整个 Hyprland 会话。`display` 补丁独立于默认补丁集合，按需接入。[Hyprland 缩放校验选项](https://wiki.hypr.land/configuring/core/config-options/)
+Enable `hyprland/fractional-scaling.lua` separately. It sets
+`debug.disable_scale_checks = true`, allowing fractional logical dimensions and
+possible pixel alignment or rounding errors. This option affects the entire
+Hyprland session. The `display` patch is separate from the default patch set.
+See the [Hyprland configuration options](https://wiki.hypr.land/configuring/core/config-options/).
 
 ```bash
-# 先建立 install/symlinks.tsv 中的 customizations 和 display-controls 软链接。
+# Install the customizations and display-controls links from the manifest first.
 ./scripts/apply-patches.sh --dry-run --only display
 ./scripts/apply-patches.sh --apply --only display
 hyprctl reload
 hyprctl configerrors
 omarchy shell shell rescanPlugins
-# 发现插件是异步过程，确认所需插件已出现后再执行 enable。
+# Discovery is asynchronous. Confirm the plugin appears before enabling it.
 omarchy plugin list --json
 omarchy plugin enable display-controls
 omarchy restart shell
 ```
 
-打开右上角显示面板，选择需要的倍率。缩放命令保留上游按显示器写入 `~/.config/hypr/monitors.lua`、GTK 整数缩放和变更日志的机制。插件相邻的 `set-scale.sh` 可用于命令行设置，仓库中的源码为真实文件，用户插件目录通过软链接接入。
+Open the display panel in the status bar and select a scale. The helper retains
+upstream per-monitor persistence in `~/.config/hypr/monitors.lua`, GTK integer
+scaling and change logging. The adjacent `set-scale.sh` also accepts command-line
+requests. Sources are regular repository files linked through the user plugin
+directory.
 
 ```bash
 bash omarchy/plugins/display-controls/set-scale.sh 1.8
@@ -225,18 +296,21 @@ omarchy shell omarchy.monitor state
 node tests/display-controls.cjs
 ```
 
-恢复整数像素校验时，先在显示面板中选择与分辨率匹配的倍率，然后移除 `monitors.lua` 中对 `hypr.customizations.fractional-scaling` 的加载，并重载 Hyprland。显示面板通过 `omarchy plugin enable omarchy.monitor` 恢复内置版本。
+To restore integer-pixel checks, first select a scale compatible with the monitor
+resolution, remove the `hypr.customizations.fractional-scaling` loader from
+`monitors.lua`, and reload Hyprland. Restore the built-in display panel with
+`omarchy plugin enable omarchy.monitor`.
 
-### 输入法
+### Input method
 
 ```bash
 systemctl --user restart omarchy-fcitx5.service
 systemctl --user is-active omarchy-fcitx5.service
 ```
 
-在新应用窗口按左 Shift，确认可以切换中英文。
+In a newly opened application, press Left Shift to verify Chinese/English toggling.
 
-### 中文字体
+### Chinese fonts
 
 ```bash
 fc-cache -f
@@ -245,9 +319,40 @@ fc-match 'monospace:charset=4e2d'
 fc-match 'serif:charset=4e2d'
 ```
 
-以汉字“中”的码位检查回退，预期分别匹配 Sarasa UI SC、Sarasa Mono SC、Noto Serif CJK SC。应用可能需要重新打开后选取字体。
+These queries check fallback for U+4E2D, a Chinese character. Expected matches are
+Sarasa UI SC, Sarasa Mono SC and Noto Serif CJK SC respectively. Reopen applications
+if they need to refresh font selection.
 
-### Shell 插件
+### VS Code editor inertia
+
+`editor.inertialScroll` continues motion after finger release.
+`editor.smoothScrolling` controls animated transitions independently. The
+standalone helper changes only the inertia setting and previews by default.
+
+```bash
+node scripts/configure-vscode-scroll.cjs
+node scripts/configure-vscode-scroll.cjs --apply
+# Set inertia back to false.
+node scripts/configure-vscode-scroll.cjs --apply --disable
+# Select another edition or named profile explicitly.
+node scripts/configure-vscode-scroll.cjs --settings /path/to/settings.json --apply
+```
+
+The default target is
+`${XDG_CONFIG_HOME:-$HOME/.config}/Code/User/settings.json`. The script preserves
+JSONC comments and unrelated settings, backs up the original under
+`${XDG_STATE_HOME:-$HOME/.local/state}/omarchy-configs/vscode-scroll-backups/`,
+and prints its path. Repeated runs skip already matching values. Close the
+settings editor before applying. This helper runs independently of installation
+and patch application.
+
+Test in a long text file by scrolling vertically and lifting your fingers. If the
+effect is missing, check the active profile, workspace and language overrides;
+use **Developer: Reload Window** if needed. Other surfaces, including terminals,
+sidebars and webviews, may use different scroll implementations. See the
+[complete guide](docs/vscode-scrolling.md) for details and backup recovery.
+
+### Shell plugins
 
 ```bash
 omarchy plugin validate "$PWD/omarchy/plugins/display-controls"
@@ -257,19 +362,32 @@ omarchy plugin validate "$PWD/omarchy/plugins/passwordless-lock"
 omarchy restart shell
 ```
 
-- 托盘中验证图标置顶、显隐和点击动作。
-- 按 `Super+Space` 搜索并选择结果，再次输入相同搜索词，确认上次选择置顶。
-- 启用免密锁屏后，可用 `omarchy system lock` 验证点击或按键进入桌面。
+- Check tray pinning, visibility and click actions.
+- Search with `Super+Space`, select a result, then repeat the query and confirm
+  that the previous selection appears first.
+- With passwordless locking enabled, use `omarchy system lock` to check click or
+  key dismissal.
 
-同一轮插件编辑集中重启一次 Shell 即可。插件子目录通过软链接接入时，显式重启可确保代码完整重新加载。
+Restart the shell once after a batch of plugin edits. An explicit restart ensures
+complete reloading when plugin subdirectories are symlinked.
 
-## 安装恢复
+## Installation recovery
 
-软链接安装器会打印备份目录，目录内保留相对 `$HOME` 的路径。恢复某个原配置时，先确认对应备份存在，移除当前指向本仓库的软链接，再把备份条目移回原位置。新建的链接可以直接移除。保留仓库文件即可再次接入。
+The symlink installer prints its backup directory, retaining paths relative to
+`$HOME`. To restore an original entry, confirm its backup exists, remove the
+current link to this repository, and move the backup to its original destination.
+New links can simply be removed. Keep repository sources to reinstall later.
 
-补丁备份同样保留相对 `$HOME` 的路径。可从脚本打印的备份目录取回对应的 `input.lua`、`bindings.lua`、`looknfeel.lua`、`monitors.lua` 或 Fcitx5 配置。恢复 Hyprland 配置后执行 `hyprctl reload` 和 `hyprctl configerrors`，恢复输入法配置后重启 Fcitx5 服务。
+Patch backups also retain paths relative to `$HOME`. Restore the relevant
+`input.lua`, `bindings.lua`, `looknfeel.lua`, `monitors.lua` or Fcitx5 configuration
+from the printed backup directory. After restoring Hyprland files, run
+`hyprctl reload` and `hyprctl configerrors`. Restart Fcitx5 after restoring its
+configuration. The VS Code helper has its own recovery instructions in the
+[scrolling guide](docs/vscode-scrolling.md).
 
-插件可通过内置标识恢复。恢复显示面板前，按显示面板章节先选择适合分辨率的倍率，并移除精确分数缩放模块。
+Restore shell plugins using their built-in identifiers. Before restoring the
+display panel, select a compatible scale and remove the exact fractional-scaling
+module as described in the display section.
 
 ```bash
 omarchy plugin enable omarchy.menu
@@ -279,9 +397,10 @@ omarchy plugin enable omarchy.lock
 omarchy restart shell
 ```
 
-## 回归测试
+## Regression tests
 
 ```bash
+node tests/vscode-scrolling.cjs
 node tests/install-scripts.cjs
 node tests/display-controls.cjs
 lua tests/tab-shortcuts.lua
@@ -289,20 +408,40 @@ g++ -std=c++20 -Wall -Wextra tests/two-finger-focus.cpp -o /tmp/test-two-finger-
 /tmp/test-two-finger-focus
 ```
 
-安装脚本测试使用临时 HOME 和状态目录，补丁部分读取已安装 Omarchy 的默认配置模板。缩放测试使用模拟的 Hyprland 命令，覆盖倍率保留、持久化及失败处理。
+Installer tests use temporary home and state directories; patch tests read
+installed Omarchy default templates. Display tests mock Hyprland commands to
+check scale preservation, persistence and failure handling. VS Code tests use
+isolated JSONC fixtures to check preview, preservation, backups and disable mode.
 
-## 数据与维护
+## Local data and maintenance
 
-菜单按搜索词的大小写和空白规范化后记录选择，每个菜单和搜索词保留最近一次选择，最多 256 条。数据位于 `${XDG_STATE_HOME:-$HOME/.local/state}/omarchy/menu-history.json`。
+Menu history normalizes query case and whitespace and retains the latest choice
+for each menu/query pair, up to 256 entries. It lives at
+`${XDG_STATE_HOME:-$HOME/.local/state}/omarchy/menu-history.json`.
 
-显示缩放沿用 Omarchy 的本地变更日志，保存到 `${XDG_STATE_HOME:-$HOME/.local/state}/omarchy/monitor-scaling.log`，其中包含显示器名称、进程参数和父进程信息。免密锁屏沿用上游背景与指纹状态处理，其缓存位于用户缓存目录。分享诊断资料时应检查日志中的路径和进程信息。
+Display scaling retains Omarchy's local change log at
+`${XDG_STATE_HOME:-$HOME/.local/state}/omarchy/monitor-scaling.log`, including
+monitor names, process arguments and parent process information. The lock plugin
+retains upstream background and fingerprint state handling, with caches in the
+user cache directory. Inspect paths and process information before sharing logs.
 
-运行时配置、搜索记录、日志、密钥、缓存、备份和编译产物存放在用户配置、状态、缓存或数据目录中。仓库只管理模块源码、通用接入文件和测试。
+Runtime settings, search history, logs, credentials, caches, backups and compiled
+libraries belong in user configuration, state, cache or data directories. This
+repository manages module sources, generic integration files and tests.
 
-字体规则、Lua 模块与插件源码通过仓库中的文件维护。插件升级时应比对所依赖的 Omarchy API 和上游实现。备份、缓存和运行数据使用用户的状态或缓存目录。
+Maintain font rules, Lua modules and plugin sources here. Compare dependent
+Omarchy APIs and upstream implementations when updating plugins. Documentation
+and source comments are in English; keep the linked Chinese README in sync when
+changing installation or activation steps. The lock plugin retains its Chinese
+UI translation catalog.
 
-## 许可与上游
+## License and upstream
 
-本仓库采用 MIT 许可，见 `LICENSE`。Omarchy 派生组件保留上游版权及 MIT 许可。
+This repository uses the MIT license in [LICENSE](LICENSE). Omarchy-derived
+components retain upstream copyright and MIT licensing.
 
-Shell 插件派生自 Omarchy 4.5，清单保留上游作者信息和 `clonedFrom` 元数据。上游 MIT 许可文本保存在 `LICENSES/Omarchy-MIT.txt`。[Omarchy](https://github.com/omacom/omarchy)，[上游许可](https://github.com/omacom/omarchy/blob/quattro/LICENSE)。
+Shell plugins derive from Omarchy 4.5. Manifests retain upstream authors and
+`clonedFrom` metadata. The upstream MIT text is preserved in
+[LICENSES/Omarchy-MIT.txt](LICENSES/Omarchy-MIT.txt).
+See [Omarchy](https://github.com/omacom/omarchy) and its
+[upstream license](https://github.com/omacom/omarchy/blob/quattro/LICENSE).

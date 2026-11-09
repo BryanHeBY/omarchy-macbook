@@ -1,5 +1,8 @@
 # manifest.json
 
-`system-tray` 的插件清单，登记显示名称、版本、能力和加载入口。系统托盘管理图标、置顶、显隐和点击动作，包含 Clash 主界面的快捷启动。
+The `system-tray` manifest declares the display name, version, capabilities and
+entry points. The plugin manages tray icons, pinning, visibility and activation,
+including a shortcut to the Clash application window.
 
-`clonedFrom` 指向 `omarchy.tray`，用于 Omarchy 的插件替换和内置路由解析。严格 JSON 的说明保存在此配套文档中。
+`clonedFrom` points to `omarchy.tray` for Omarchy plugin replacement and built-in
+route resolution. This companion file documents the strict JSON manifest.

@@ -1,4 +1,4 @@
-// 用途  点击或任意按键进入桌面的锁屏界面，保留背景和视觉效果。
+// Lock screen dismissed by a click or any key, retaining background rendering and visual effects.
 
 import QtQuick
 import QtQuick.Effects

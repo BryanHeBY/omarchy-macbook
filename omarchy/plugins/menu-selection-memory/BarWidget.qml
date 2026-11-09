@@ -1,4 +1,4 @@
-// 用途  超级菜单状态栏按钮，继续使用 omarchy.menu 路由。
+// Menu bar widget using the omarchy.menu route.
 
 import QtQuick
 import qs.Ui

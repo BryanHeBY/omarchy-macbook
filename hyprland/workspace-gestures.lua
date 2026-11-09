@@ -1,5 +1,5 @@
--- 三指、四指横滑识别后立即切换一次工作区。左滑到下一工作区，右滑到上一工作区。
--- 使用 r+1/r-1 包含空工作区，避免跟手拖动回弹。
+-- Switch once per recognized three- or four-finger swipe: left goes next, right goes previous.
+-- Use r+1/r-1 to include empty workspaces and avoid interactive drag rebound.
 
 -- Switch workspaces with discrete three- and four-finger swipes.
 -- See https://wiki.hypr.land/configuring/core/binds/gestures/

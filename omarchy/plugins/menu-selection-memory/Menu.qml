@@ -1,4 +1,4 @@
-// 用途  超级菜单入口，记录搜索选择并将同一菜单、相同搜索词下的上次选择置顶。
+// Menu entry point that records selections and promotes the latest choice for the same menu/query.
 
 import Quickshell
 import Quickshell.Io

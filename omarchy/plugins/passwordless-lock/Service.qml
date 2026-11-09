@@ -1,4 +1,4 @@
-// 用途  锁屏生命周期服务，点击或任意键直接完成解锁。
+// Lock lifecycle service that unlocks on a click or any key.
 
 import QtQuick
 import Quickshell

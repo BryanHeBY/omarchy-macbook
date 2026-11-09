@@ -1,4 +1,4 @@
-// 用途  从 Omarchy 4.5.0 克隆的托盘条目识别、置顶和隐藏模型。
+// Tray item identification, pinning and visibility model derived from Omarchy 4.5.0.
 
 function text(value) {
   return String(value || "").toLowerCase()

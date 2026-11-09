@@ -1,4 +1,4 @@
-// 用途  系统托盘定制，左键点击 Clash 启动 /usr/bin/clash-verge，右键打开托盘菜单。
+// Customize the system tray: left-click Clash to launch /usr/bin/clash-verge; right-click for its menu.
 
 import Quickshell
 import QtQuick

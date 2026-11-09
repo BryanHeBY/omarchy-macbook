@@ -1,4 +1,4 @@
-// 用途  搜索偏好解析与排序，每个菜单和搜索词保存一次最近选择，最多保留 256 条。
+// Parse and rank search preferences; retain the latest choice per menu/query, up to 256 entries.
 
 // One recent choice per menu and search phrase, newest first.
 function normalizeQuery(query) {
