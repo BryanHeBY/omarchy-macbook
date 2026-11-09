@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "passwordless-lock",
+  "name": "Passwordless lock screen",
+  "version": "1.0.0",
+  "author": "Omarchy",
+  "description": "Dismiss the lock screen with a click or any key.",
+  "omarchy": {
+    "capabilities": [
+      "authentication"
+    ],
+    "clonedFrom": "omarchy.lock"
+  },
+  "kinds": [
+    "service"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "service": "Service.qml"
+  }
+}

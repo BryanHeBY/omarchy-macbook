@@ -1,0 +1,25 @@
+# Fcitx5 primary Shift toggle for Omarchy 4.5 default hotkey groups.
+--- a/.config/fcitx5/config
++++ b/.config/fcitx5/config
+@@ -1,7 +1,8 @@
+ # Omarchy binds Super+I. Leave Ctrl+Space to tmux/Herdr and other Super keys to the desktop.
+ [Hotkey/TriggerKeys]
+-0=Zenkaku_Hankaku
+-1=Hangul
++0=Shift_L
++1=Zenkaku_Hankaku
++2=Hangul
+ 
+ [Hotkey/ActivateKeys]
+ 0=Henkan
+@@ -9,9 +10,8 @@
+ [Hotkey/DeactivateKeys]
+ 0=Muhenkan
+ 
+-# A lone Shift leaves an engine like Pinyin for Latin input and returns to it.
++# Left Shift toggles input methods even in a new, initially inactive window.
+ [Hotkey/AltTriggerKeys]
+-0=Shift_L
+ 
+ [Hotkey/EnumerateGroupForwardKeys]
+ 

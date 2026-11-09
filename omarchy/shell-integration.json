@@ -1,0 +1,21 @@
+{
+  "widgetReplacements": {
+    "omarchy.menu": "menu-selection-memory",
+    "omarchy.tray": "system-tray",
+    "omarchy.monitor": "display-controls"
+  },
+  "enabledServices": [
+    "passwordless-lock"
+  ],
+  "disabledPlugins": [
+    "omarchy.lock",
+    "omarchy.menu"
+  ],
+  "cloneSourceRestores": [
+    "passwordless-lock",
+    "menu-selection-memory"
+  ],
+  "trayPinned": [
+    "tray-icon tray app clash-verge-rev-tray"
+  ]
+}

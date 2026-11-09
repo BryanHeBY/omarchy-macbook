@@ -1,0 +1,12 @@
+# Omarchy 4.5 Lua configuration loader for tab-shortcuts.
+--- a/.config/hypr/bindings.lua
++++ b/.config/hypr/bindings.lua
+@@ -1,5 +1,8 @@
+ -- Keep only your personal keybinding overrides here. Add new bindings with
+ -- o.bind or replace defaults with o.rebind.
++
++-- Load the optional Omarchy customization module.
++require("hypr.customizations.tab-shortcuts")
+ 
+ -- See current bindings and descriptions:
+ --   omarchy menu keybindings --print

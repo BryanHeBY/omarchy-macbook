@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "system-tray",
+  "name": "System tray",
+  "version": "1.0.0",
+  "author": "Omarchy",
+  "description": "System tray with pinned entries, visibility controls and custom activation actions.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Tray.qml"
+  },
+  "barWidget": {
+    "displayName": "System tray",
+    "description": "System tray with pinned entries, visibility controls and custom activation actions.",
+    "category": "Status",
+    "allowMultiple": false
+  },
+  "omarchy": {
+    "clonedFrom": "omarchy.tray"
+  }
+}

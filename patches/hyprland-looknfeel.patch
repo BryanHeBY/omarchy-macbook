@@ -1,0 +1,11 @@
+# Omarchy 4.5 Lua configuration loader for workspace-animation.
+--- a/.config/hypr/looknfeel.lua
++++ b/.config/hypr/looknfeel.lua
+@@ -1,4 +1,7 @@
+ -- Change the default Omarchy look'n'feel.
++
++-- Load the optional Omarchy customization module.
++require("hypr.customizations.workspace-animation")
+ 
+ -- Opt another application in to Omarchy's standard transparency.
+ -- Find its class with: hyprctl clients

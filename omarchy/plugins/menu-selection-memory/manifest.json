@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "menu-selection-memory",
+  "name": "Menu selection memory",
+  "version": "1.0.0",
+  "author": "Omarchy",
+  "description": "Remember the last selected result for each menu and search query.",
+  "kinds": [
+    "menu",
+    "bar-widget"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "menu": "Menu.qml",
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Menu selection memory",
+    "description": "Remember the last selected result for each menu and search query.",
+    "category": "Compositor",
+    "allowMultiple": false
+  },
+  "omarchy": {
+    "clonedFrom": "omarchy.menu"
+  }
+}

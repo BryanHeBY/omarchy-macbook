@@ -1,0 +1,12 @@
+# Omarchy 4.5 Lua configuration loader for workspace-gestures.
+--- a/.config/hypr/input.lua
++++ b/.config/hypr/input.lua
+@@ -1,5 +1,8 @@
+ -- Keep only your personal input overrides here. Uncommented settings below
+ -- replace Omarchy's defaults.
++
++-- Load the optional Omarchy customization module.
++require("hypr.customizations.workspace-gestures")
+ 
+ -- Keyboard layout and options.
+ -- See https://wiki.hypr.land/Configuring/Basics/Variables/#input

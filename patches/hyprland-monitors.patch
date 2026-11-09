@@ -1,0 +1,12 @@
+# Omarchy 4.5 Lua configuration loader for exact fractional display scaling.
+--- a/.config/hypr/monitors.lua
++++ b/.config/hypr/monitors.lua
+@@ -1,5 +1,8 @@
+ -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
+ -- List current monitors and supported resolutions with: hyprctl monitors all
++
++-- Allow exact fractional scales before applying monitor rules.
++require("hypr.customizations.fractional-scaling")
+ 
+ -- Monitor scale is Hyprland's scale for the output. It sizes everything
+ -- Wayland-native, accepts fractions (1.6, 1.75), and applies immediately.
