@@ -43,7 +43,7 @@ an error before writing. An absent settings file is created only with `--apply`.
 An already matching value produces no write or backup.
 
 Existing settings are copied to a private directory under
-`${XDG_STATE_HOME:-$HOME/.local/state}/omarchy-configs/vscode-scroll-backups/`
+`${XDG_STATE_HOME:-$HOME/.local/state}/omarchy-macbook/vscode-scroll-backups/`
 before atomic replacement. The script prints the backup file path. Close the
 settings editor before applying to reduce concurrent edits. To undo only this
 option, use `--disable` or remove `editor.inertialScroll` manually. To restore the

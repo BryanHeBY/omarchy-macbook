@@ -1,4 +1,4 @@
-# Omarchy Configs
+# Omarchy MacBook
 
 [简体中文](README.zh-CN.md)
 
@@ -184,7 +184,7 @@ allows partial integration. The input-method patch moves `Shift_L` from
 
 All selected patches are checked before writing, including verification that the
 Lua module link points to this repository. Targets are backed up under
-`${XDG_STATE_HOME:-$HOME/.local/state}/omarchy-configs/patch-backups/`. A failed
+`${XDG_STATE_HOME:-$HOME/.local/state}/omarchy-macbook/patch-backups/`. A failed
 application attempts to restore files touched by that invocation.
 
 ### Enable shell plugins
@@ -236,14 +236,14 @@ hyprctl configerrors
 ```
 
 The library is installed at
-`${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-configs/plugins/two-finger-focus.so`.
+`${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-macbook/plugins/two-finger-focus.so`.
 Rebuild against matching headers after Hyprland upgrades. The plugin checks the
 version and ABI on load. After rebuilding changed sources, unload and explicitly
 load the library before reloading configuration.
 
 ```bash
-hyprctl plugin unload "${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-configs/plugins/two-finger-focus.so"
-hyprctl plugin load "${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-configs/plugins/two-finger-focus.so"
+hyprctl plugin unload "${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-macbook/plugins/two-finger-focus.so"
+hyprctl plugin load "${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-macbook/plugins/two-finger-focus.so"
 hyprctl reload
 hyprctl configerrors
 ```
@@ -344,7 +344,7 @@ node scripts/configure-vscode-scroll.cjs --settings /path/to/settings.json --app
 The default target is
 `${XDG_CONFIG_HOME:-$HOME/.config}/Code/User/settings.json`. The script preserves
 JSONC comments and unrelated settings, backs up the original under
-`${XDG_STATE_HOME:-$HOME/.local/state}/omarchy-configs/vscode-scroll-backups/`,
+`${XDG_STATE_HOME:-$HOME/.local/state}/omarchy-macbook/vscode-scroll-backups/`,
 and prints its path. Repeated runs skip already matching values. Close the
 settings editor before applying. This helper runs independently of installation
 and patch application.

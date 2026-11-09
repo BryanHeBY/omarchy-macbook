@@ -20,7 +20,7 @@ function run(args = []) {
 }
 function ok(result) { assert.equal(result.status, 0, result.stdout + result.stderr); }
 function backups() {
-  const root = path.join(state, 'omarchy-configs/vscode-scroll-backups');
+  const root = path.join(state, 'omarchy-macbook/vscode-scroll-backups');
   return fs.existsSync(root) ? fs.readdirSync(root).map(name => path.join(root, name, 'settings.json')) : [];
 }
 function fixture(name, source) {

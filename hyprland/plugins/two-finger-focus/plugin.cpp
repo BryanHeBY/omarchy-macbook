@@ -98,7 +98,7 @@ APICALL EXPORT PLUGIN_DESCRIPTION_INFO PLUGIN_INIT(HANDLE handle) {
     swipeListener = Event::bus()->m_events.gesture.swipe.begin.listen([] { gesture.reset(); });
     pinchListener = Event::bus()->m_events.gesture.pinch.begin.listen([] { gesture.reset(); });
     reloadListener = Event::bus()->m_events.config.reloaded.listen([] { gesture.reset(); });
-    return {"two-finger-focus", "Two-finger focus cycling in multi-window tiled workspaces", "Omarchy Configs", "1.0.0"};
+    return {"two-finger-focus", "Two-finger focus cycling in multi-window tiled workspaces", "Omarchy MacBook", "1.0.0"};
 }
 
 APICALL EXPORT void PLUGIN_EXIT() {

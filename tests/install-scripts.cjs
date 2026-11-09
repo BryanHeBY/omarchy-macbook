@@ -27,7 +27,7 @@ try {
   successful(run(home, 'install-links.sh'));
   assert(!fs.existsSync(path.join(home, 'state')), 'dry run writes no state');
   successful(run(home, 'install-links.sh', ['--apply']));
-  const backupRoot = path.join(home, 'state/omarchy-configs/backups');
+  const backupRoot = path.join(home, 'state/omarchy-macbook/backups');
   const backups = fs.readdirSync(backupRoot).filter(name => name.startsWith('install.') && fs.statSync(path.join(backupRoot, name)).isDirectory());
   assert.equal(backups.length, 1);
   const saved = path.join(backupRoot, backups[0]);

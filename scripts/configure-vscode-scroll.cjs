@@ -144,7 +144,7 @@ function main() {
   if (!unchanged()) throw new Error('Settings changed during preparation; retry.');
   if (exists) {
     const root = path.join(process.env.XDG_STATE_HOME || path.join(os.homedir(), '.local/state'),
-      'omarchy-configs/vscode-scroll-backups');
+      'omarchy-macbook/vscode-scroll-backups');
     fs.mkdirSync(root, { recursive: true, mode: 0o700 });
     const backup = fs.mkdtempSync(path.join(root, 'settings-'));
     fs.copyFileSync(file, path.join(backup, 'settings.json'));

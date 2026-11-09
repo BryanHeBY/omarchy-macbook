@@ -119,7 +119,7 @@ for relative in "${pending[@]}"; do
   done < <(patch_targets "$relative")
 done
 
-backup_parent="${XDG_STATE_HOME:-$task_home/.local/state}/omarchy-configs/patch-backups"
+backup_parent="${XDG_STATE_HOME:-$task_home/.local/state}/omarchy-macbook/patch-backups"
 mkdir -p -- "$backup_parent"
 backup_dir=$(mktemp -d "$backup_parent/$(date +%Y%m%d-%H%M%S).XXXXXX")
 for relative in "${pending[@]}"; do

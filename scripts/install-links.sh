@@ -27,7 +27,7 @@ while (( $# > 0 )); do
 done
 
 # Serialize installers before examining existing destinations.
-backup_parent="${XDG_STATE_HOME:-$task_home/.local/state}/omarchy-configs/backups"
+backup_parent="${XDG_STATE_HOME:-$task_home/.local/state}/omarchy-macbook/backups"
 if [[ $mode == apply ]]; then
   mkdir -p -- "$backup_parent"
   exec {lock_fd}>"$backup_parent/install.lock"

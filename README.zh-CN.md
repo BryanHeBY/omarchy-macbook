@@ -1,4 +1,4 @@
-# Omarchy Configs
+# Omarchy MacBook
 
 [English](README.md)
 
@@ -144,7 +144,7 @@ tests/install-scripts.cjs
 
 Hyprland 补丁分别在 `input.lua`、`bindings.lua`、`looknfeel.lua` 中接入对应模块。脚本识别已有的 `require(...)`，支持重复执行和部分接入。输入法补丁将 `Shift_L` 从 `AltTriggerKeys` 移入 `TriggerKeys`。
 
-补丁应用前会检查全部选中项，并确认 Lua 模块链接指向当前仓库。待修改文件备份到 `${XDG_STATE_HOME:-$HOME/.local/state}/omarchy-configs/patch-backups/`，执行失败时尝试恢复本次触及的文件。
+补丁应用前会检查全部选中项，并确认 Lua 模块链接指向当前仓库。待修改文件备份到 `${XDG_STATE_HOME:-$HOME/.local/state}/omarchy-macbook/patch-backups/`，执行失败时尝试恢复本次触及的文件。
 
 ### 接入 Shell 插件
 
@@ -185,11 +185,11 @@ hyprctl plugin list
 hyprctl configerrors
 ```
 
-编译产物位于 `${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-configs/plugins/two-finger-focus.so`。Hyprland 升级后，需要用匹配的头文件重新编译。插件加载时校验版本和 ABI。修改插件源码并重新编译后，可卸载当前插件再重新加载配置。
+编译产物位于 `${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-macbook/plugins/two-finger-focus.so`。Hyprland 升级后，需要用匹配的头文件重新编译。插件加载时校验版本和 ABI。修改插件源码并重新编译后，可卸载当前插件再重新加载配置。
 
 ```bash
-hyprctl plugin unload "${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-configs/plugins/two-finger-focus.so"
-hyprctl plugin load "${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-configs/plugins/two-finger-focus.so"
+hyprctl plugin unload "${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-macbook/plugins/two-finger-focus.so"
+hyprctl plugin load "${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-macbook/plugins/two-finger-focus.so"
 hyprctl reload
 ```
 
@@ -271,7 +271,7 @@ node scripts/configure-vscode-scroll.cjs --apply --disable
 node scripts/configure-vscode-scroll.cjs --settings /path/to/settings.json --apply
 ```
 
-默认目标为 `${XDG_CONFIG_HOME:-$HOME/.config}/Code/User/settings.json`。脚本保留 JSONC 注释及其他设置，写入前将原文件备份到 `${XDG_STATE_HOME:-$HOME/.local/state}/omarchy-configs/vscode-scroll-backups/` 并打印路径，重复运行会跳过已生效的值。应用前先关闭设置编辑器。此脚本独立于安装及补丁流程。
+默认目标为 `${XDG_CONFIG_HOME:-$HOME/.config}/Code/User/settings.json`。脚本保留 JSONC 注释及其他设置，写入前将原文件备份到 `${XDG_STATE_HOME:-$HOME/.local/state}/omarchy-macbook/vscode-scroll-backups/` 并打印路径，重复运行会跳过已生效的值。应用前先关闭设置编辑器。此脚本独立于安装及补丁流程。
 
 在较长的文本文件中双指上下滑动并抬手验证效果。若未生效，检查当前配置文件、工作区及语言级覆盖项，必要时执行 VS Code 的 `Developer: Reload Window`。它只针对编辑区，终端、侧栏及 Webview 可能采用其他滚动实现。完整说明与备份恢复方式见 [VS Code 惯性滚动](docs/vscode-scrolling.md)。
 

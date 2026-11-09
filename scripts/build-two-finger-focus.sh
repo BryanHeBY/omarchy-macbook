@@ -3,7 +3,7 @@
 # The shared library is installed in the user's data directory, outside the repository.
 set -euo pipefail
 repo_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
-output_dir="${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-configs/plugins"
+output_dir="${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-macbook/plugins"
 compiler=${CXX:-g++}
 command -v "$compiler" >/dev/null
 pkg-config --exists hyprland
