@@ -1,5 +1,7 @@
 # Passwordless lock dismissal
 
+[简体中文](README.zh-CN.md)
+
 Dismiss the lock screen with a click or any key. Anyone with physical access can
 enter the session when this feature is enabled. It is an explicit installation
 option.

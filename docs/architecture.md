@@ -1,13 +1,16 @@
 # Repository architecture
 
+[简体中文](architecture.zh-CN.md)
+
 Omarchy MacBook groups desktop behavior by capability. A feature owns the files
 needed to understand, configure and test that behavior.
 
 ## Feature ownership
 
-Each directory under `features/` has an English README explaining its purpose,
-files, dependencies, activation, verification and recovery. Small features may
-contain a single configuration file. Features with native code use `native/`;
+Each directory under `features/` has an English `README.md` and Simplified Chinese
+`README.zh-CN.md` explaining its purpose, files, dependencies, activation,
+verification and recovery. Small features may contain a single configuration
+file. Features with native code use `native/`;
 shell plugins keep their complete runtime payload under `plugin/`.
 
 Component helpers such as `configure.py`, `build.sh` and `configure.cjs` live with
@@ -58,6 +61,11 @@ in the failed-install backup directory.
 The root READMEs introduce the collection, list features and link to operational
 guides. `docs/installation.md` covers activation and recovery. Feature READMEs
 contain component details, and `docs/examples/` contains reference material.
+
+Corresponding English and Chinese pages link to each other at the top. Chinese
+pages prefer existing Chinese counterparts for documentation links. Code,
+configuration, licenses and external references without translations retain
+their original targets.
 
 `tests/installation/` covers cross-feature orchestration, symlink migration,
 patch application, backups and failure recovery. Component tests exercise their

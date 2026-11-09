@@ -30,22 +30,22 @@ python3 install.py --apply --with-passwordless-lock
 python3 install.py --apply --with-vscode-inertia
 ```
 
-每次完整安装会应用所选输入法方案和双指状态，保留其他已有用户选择。各步骤分别备份，发生错误时停止后续步骤。独立配置和恢复方法见 [安装说明](docs/installation.md)。
+每次完整安装会应用所选输入法方案和双指状态，保留其他已有用户选择。各步骤分别备份，发生错误时停止后续步骤。独立配置和恢复方法见 [安装说明](docs/installation.zh-CN.md)。
 
 ## 功能
 
 | 功能 | 行为 | 说明 |
 | --- | --- | --- |
-| 工作区导航 | 三／四指离散切换、空工作区与缓出滑动动画 | [工作区导航](features/workspace-navigation/README.md) |
-| 标签页快捷键 | Super+W 关闭标签或文档，Super+T 按应用习惯新建标签或文档 | [标签页快捷键](features/tab-shortcuts/README.md) |
-| 键盘与输入法 | Caps Lock 长短按、Fn 切源、Fn+E 表情，另有左 Shift 方案 | [键盘与输入法](features/keyboard-input/README.md) |
-| 中文字体 | Sarasa UI/Mono SC 与 Noto CJK 回退 | [中文字体](features/chinese-fonts/README.md) |
-| 菜单选择记忆 | 同一菜单和搜索词优先显示上次选择 | [菜单选择记忆](features/menu-selection-memory/README.md) |
-| 系统托盘 | 图标置顶、显隐和点击动作，包含 Clash 启动 | [系统托盘](features/system-tray/README.md) |
-| 窗口焦点手势 | 可选双指横滑切换平铺窗口焦点 | [窗口焦点手势](features/window-focus-gestures/README.md) |
-| 显示面板 | 精确的 1×、1.25×、1.6×、1.8×、1.9×、2×、3× 档位 | [显示面板](features/display-controls/README.md) |
-| 免密锁屏 | 点击或任意按键进入桌面 | [免密锁屏](features/passwordless-lock/README.md) |
-| VS Code 滚动 | 编辑器抬手后的惯性滚动 | [VS Code 滚动](features/vscode-scrolling/README.md) |
+| 工作区导航 | 三／四指离散切换、空工作区与缓出滑动动画 | [工作区导航](features/workspace-navigation/README.zh-CN.md) |
+| 标签页快捷键 | Super+W 关闭标签或文档，Super+T 按应用习惯新建标签或文档 | [标签页快捷键](features/tab-shortcuts/README.zh-CN.md) |
+| 键盘与输入法 | Caps Lock 长短按、Fn 切源、Fn+E 表情，另有左 Shift 方案 | [键盘与输入法](features/keyboard-input/README.zh-CN.md) |
+| 中文字体 | Sarasa UI/Mono SC 与 Noto CJK 回退 | [中文字体](features/chinese-fonts/README.zh-CN.md) |
+| 菜单选择记忆 | 同一菜单和搜索词优先显示上次选择 | [菜单选择记忆](features/menu-selection-memory/README.zh-CN.md) |
+| 系统托盘 | 图标置顶、显隐和点击动作，包含 Clash 启动 | [系统托盘](features/system-tray/README.zh-CN.md) |
+| 窗口焦点手势 | 可选双指横滑切换平铺窗口焦点 | [窗口焦点手势](features/window-focus-gestures/README.zh-CN.md) |
+| 显示面板 | 精确的 1×、1.25×、1.6×、1.8×、1.9×、2×、3× 档位 | [显示面板](features/display-controls/README.zh-CN.md) |
+| 免密锁屏 | 点击或任意按键进入桌面 | [免密锁屏](features/passwordless-lock/README.zh-CN.md) |
+| VS Code 滚动 | 编辑器抬手后的惯性滚动 | [VS Code 滚动](features/vscode-scrolling/README.zh-CN.md) |
 
 ## 目录原则
 
@@ -60,7 +60,7 @@ docs/examples/             参考配置
 LICENSES/                  上游许可声明
 ```
 
-每个功能维护自己的源码、配置和测试。Shell 插件的完整运行目录放在 `plugin/`，原生插件源码放在 `native/`。安装器通过清单部署逐文件 Lua 链接及完整插件目录链接，运行数据使用用户的 XDG 目录。职责划分见 [架构说明](docs/architecture.md)。
+每个功能维护自己的源码、配置和测试。Shell 插件的完整运行目录放在 `plugin/`，原生插件源码放在 `native/`。安装器通过清单部署逐文件 Lua 链接及完整插件目录链接，运行数据使用用户的 XDG 目录。职责划分见 [架构说明](docs/architecture.zh-CN.md)。
 
 ## 环境与依赖
 
@@ -96,7 +96,7 @@ g++ -std=c++20 -Wall -Wextra features/window-focus-gestures/tests/gesture-state.
 
 安装器打印 `${XDG_STATE_HOME:-$HOME/.local/state}/omarchy-macbook/` 下的备份位置。软链接备份保留相对用户目录的路径，包含被替换的文件和链接。键盘与手势工具保留各自备份，并在失败时尝试恢复。
 
-用户配置、凭据、搜索记录、日志、缓存和编译产物存放在用户目录。菜单记忆位于 `${XDG_STATE_HOME:-$HOME/.local/state}/omarchy/menu-history.json`。显示日志可能包含显示器名称、路径和进程参数，分享诊断资料前应检查。恢复步骤见 [安装说明](docs/installation.md) 及各功能文档。
+用户配置、凭据、搜索记录、日志、缓存和编译产物存放在用户目录。菜单记忆位于 `${XDG_STATE_HOME:-$HOME/.local/state}/omarchy/menu-history.json`。显示日志可能包含显示器名称、路径和进程参数，分享诊断资料前应检查。恢复步骤见 [安装说明](docs/installation.zh-CN.md) 及各功能文档。
 
 ## 许可与上游
 

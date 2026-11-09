@@ -1,5 +1,7 @@
 # Installation profiles
 
+[简体中文](README.zh-CN.md)
+
 `recommended.json` is the source of recommended activation defaults.
 `input_method` selects `caps-fn` or `shift`. `features` maps every supported
 feature directory name to a JSON boolean. The root installer validates the

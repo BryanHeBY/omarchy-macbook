@@ -1,5 +1,7 @@
 # Shell integration example
 
+[简体中文](README.zh-CN.md)
+
 `shell-integration.json` illustrates a combined installation including optional
 display controls and passwordless locking. Recommended activation defaults are
 defined in [the recommended profile](../../profiles/recommended.json).

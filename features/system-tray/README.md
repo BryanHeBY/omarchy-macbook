@@ -1,5 +1,7 @@
 # System tray
 
+[简体中文](README.zh-CN.md)
+
 Manage tray icon visibility, pinning and activation. Left-clicking Clash launches
 `/usr/bin/clash-verge`; right-clicking opens its tray menu. Pin an icon in the tray
 management panel to keep it visible.

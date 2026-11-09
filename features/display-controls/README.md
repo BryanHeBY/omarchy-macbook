@@ -1,5 +1,7 @@
 # Display controls
 
+[简体中文](README.zh-CN.md)
+
 An Omarchy display panel with scale presets of 1, 1.25, 1.6, 1.8, 1.9, 2 and 3.
 Brightness, text size and monitor management follow the upstream panel.
 

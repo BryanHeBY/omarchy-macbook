@@ -1,5 +1,7 @@
 # Two-finger window focus gestures
 
+[简体中文](README.zh-CN.md)
+
 This optional feature cycles focus among at least two visible, focusable tiled
 windows on the same workspace when the pointer is over tiled window content.
 Windows are ordered left to right, then top to bottom. Each swipe switches once.

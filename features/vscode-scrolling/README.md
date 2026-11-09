@@ -1,5 +1,7 @@
 # VS Code touchpad inertia
 
+[简体中文](README.zh-CN.md)
+
 > **Optimized for Omarchy M (MacBook).** Part of a configuration and plugin
 > collection that brings familiar macOS workflows and a desktop experience
 > closer to native macOS.
@@ -66,7 +68,9 @@ their own behavior. This helper leaves `editor.smoothScrolling` at its existing
 value.
 
 The helper is independent of the symlink installer and patch application script.
-It is never applied automatically during installation.
+The recommended installer also invokes it when explicitly selected with
+`--with-vscode-inertia`. See the [installation guide](../../docs/installation.md)
+for the complete workflow.
 
 ## References
 

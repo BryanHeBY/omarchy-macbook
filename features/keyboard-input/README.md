@@ -1,5 +1,7 @@
 # MacBook keyboard and input switching
 
+[简体中文](README.zh-CN.md)
+
 > **Optimized for Omarchy M (MacBook).** Caps Lock and Globe/Fn actions follow
 > familiar macOS input switching, uppercase typing and emoji shortcuts.
 

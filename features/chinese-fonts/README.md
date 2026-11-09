@@ -1,5 +1,7 @@
 # Chinese font fallbacks
 
+[简体中文](README.zh-CN.md)
+
 Prefer Sarasa UI SC for Chinese interface text and Sarasa Mono SC for monospace
 text, with Noto CJK fallbacks. Serif text falls back to Noto Serif CJK SC.
 

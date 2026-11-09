@@ -1,5 +1,7 @@
 # Application-aware tab shortcuts
 
+[简体中文](README.zh-CN.md)
+
 | Application | `Super+W` forwards | `Super+T` forwards | Behavior |
 | --- | --- | --- | --- |
 | Chromium and Firefox browsers | `Ctrl+W` | `Ctrl+T` | Close or create a browser tab |

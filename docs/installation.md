@@ -1,5 +1,7 @@
 # Recommended installation and activation
 
+[简体中文](installation.zh-CN.md)
+
 The recommended profile brings familiar macOS workflows to Omarchy M on MacBook.
 Default selections come from [profiles/recommended.json](../profiles/recommended.json);
 command-line options override the corresponding selections.

@@ -1,5 +1,7 @@
 # Menu selection memory
 
+[简体中文](README.zh-CN.md)
+
 Promote the latest selected result for each menu and normalized search query.
 Queries normalize case and whitespace; up to 256 menu/query selections are kept.
 
