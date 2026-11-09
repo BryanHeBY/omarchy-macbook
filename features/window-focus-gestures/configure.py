@@ -7,6 +7,7 @@ import fcntl
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import tempfile
 
@@ -48,6 +49,11 @@ def main():
         module = config / 'hypr/customizations/two-finger-focus.lua'
         if not module.is_file() or module.resolve() != ROOT / 'features/window-focus-gestures/hyprland.lua':
             raise RuntimeError('Install the Hyprland symlink before configuring this feature.')
+        if args.enable:
+            input_config = (config / 'hypr/input.lua').read_text()
+            loader = r'''^\s*require\s*\(\s*["']hypr\.customizations\.two-finger-focus["']\s*\)'''
+            if not re.search(loader, input_config, re.MULTILINE):
+                raise RuntimeError('Apply installer/patches.sh --apply --only window-focus first.')
         previous = marker.read_bytes() if marker.exists() else None
         was_loaded = loaded()
         if args.enable:

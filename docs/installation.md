@@ -1,6 +1,8 @@
 # Recommended installation and activation
 
 The recommended profile brings familiar macOS workflows to Omarchy M on MacBook.
+Default selections come from [profiles/recommended.json](../profiles/recommended.json);
+command-line options override the corresponding selections.
 Run the installer as your desktop user from the repository root. The default
 invocation prints its complete plan. `--apply` runs the plan with backups at the
 individual configuration stages.
@@ -119,3 +121,35 @@ The font packages, keyd for Caps Lock/Fn, and optional compiler tools are instal
 with `omarchy pkg add`. The base Omarchy desktop, Fcitx5 input methods and a
 running Hyprland/Shell session should already be configured. Native compilation
 requires headers matching the running Hyprland build.
+
+## Restore configuration
+
+The component installers print their backup directories. Link backups retain
+paths relative to HOME. To restore a replaced entry, confirm its backup exists,
+remove the installed link and move the saved entry to its target. The directory
+link migration also saves the previous parent link and any remaining local
+content. Use the repository snapshot when restoring sources for an earlier layout.
+
+Patch backups retain user paths under the state directory. Restore the needed
+configuration files, reconcile newer manual edits, then reload the affected
+component. The keyboard and scrolling guides document their own backup formats.
+
+```bash
+hyprctl reload
+hyprctl configerrors
+fcitx5-remote --check -r
+```
+
+Restore shell entries through their built-in IDs when desired:
+
+```bash
+omarchy plugin enable omarchy.menu
+omarchy plugin enable omarchy.tray
+omarchy plugin enable omarchy.monitor
+omarchy plugin enable omarchy.lock
+omarchy restart shell
+```
+
+Before removing fractional scaling, select a compatible scale and remove its
+loader as described in the display-controls guide. Feature guides describe
+component-specific verification and restoration.

@@ -68,6 +68,24 @@ try {
   assert(fs.lstatSync(failedLink).isSymbolicLink());
   assert.equal(fs.readlinkSync(failedLink), path.join(repository, 'hyprland'));
 
+  // Feature-specific integration must not pull in sibling capabilities.
+  const selectedHome = path.join(temporary, 'selected');
+  fs.mkdirSync(path.join(selectedHome, '.config/hypr'), { recursive: true });
+  for (const name of ['input.lua', 'bindings.lua', 'looknfeel.lua']) {
+    fs.copyFileSync('/usr/share/omarchy/config/hypr/' + name, path.join(selectedHome, '.config/hypr', name));
+  }
+  successful(run(selectedHome, 'links.sh', ['--apply', '--only', 'hyprland']));
+  successful(run(selectedHome, 'patches.sh', ['--apply', '--only', 'workspace']));
+  let selectedInput = fs.readFileSync(path.join(selectedHome, '.config/hypr/input.lua'), 'utf8');
+  assert.match(selectedInput, /require\("hypr.customizations.workspace-gestures"\)/);
+  assert(!selectedInput.includes('hypr.customizations.two-finger-focus'));
+  assert(!fs.readFileSync(path.join(selectedHome, '.config/hypr/bindings.lua'), 'utf8').includes('hypr.customizations.tab-shortcuts'));
+  successful(run(selectedHome, 'patches.sh', ['--apply', '--only', 'window-focus']));
+  selectedInput = fs.readFileSync(path.join(selectedHome, '.config/hypr/input.lua'), 'utf8');
+  assert.match(selectedInput, /require\("hypr.customizations.two-finger-focus"\)/);
+  successful(run(selectedHome, 'patches.sh', ['--apply', '--only', 'tab-shortcuts']));
+  assert.match(fs.readFileSync(path.join(selectedHome, '.config/hypr/bindings.lua'), 'utf8'), /require\("hypr.customizations.tab-shortcuts"\)/);
+
   // Patch against the matching installed Omarchy templates, never live config.
   fs.mkdirSync(path.join(home, '.config/fcitx5'), { recursive: true });
   for (const name of ['input.lua', 'bindings.lua', 'looknfeel.lua', 'monitors.lua']) {

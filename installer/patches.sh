@@ -11,7 +11,7 @@ selection=all
 
 usage() {
   cat <<'HELP'
-Usage: installer/patches.sh [--dry-run | --apply] [--only hyprland | fcitx5 | fcitx5-shift | display]
+Usage: installer/patches.sh [--dry-run | --apply] [--only hyprland | workspace | tab-shortcuts | window-focus | fcitx5 | fcitx5-shift | display]
 
   --dry-run   Check patch status (default)
   --apply     Back up targets and apply pending patches
@@ -29,7 +29,7 @@ while (( $# > 0 )); do
     --apply) mode=apply; shift ;;
     --only)
       selection=${2:-}
-      [[ $selection == hyprland || $selection == fcitx5 || $selection == fcitx5-shift || $selection == display ]] || { usage >&2; exit 2; }
+      [[ $selection == hyprland || $selection == workspace || $selection == tab-shortcuts || $selection == window-focus || $selection == fcitx5 || $selection == fcitx5-shift || $selection == display ]] || { usage >&2; exit 2; }
       shift 2
       ;;
     -h|--help) usage; exit 0 ;;
@@ -42,6 +42,9 @@ patches=()
 if [[ $selection == all || $selection == hyprland ]]; then
   patches+=(installer/patches/hyprland-input.patch installer/patches/hyprland-bindings.patch installer/patches/hyprland-looknfeel.patch installer/patches/hyprland-window-focus.patch)
 fi
+[[ $selection != workspace ]] || patches+=(installer/patches/hyprland-input.patch installer/patches/hyprland-looknfeel.patch)
+[[ $selection != tab-shortcuts ]] || patches+=(installer/patches/hyprland-bindings.patch)
+[[ $selection != window-focus ]] || patches+=(installer/patches/hyprland-window-focus.patch)
 [[ $selection != all && $selection != fcitx5 ]] || patches+=(features/keyboard-input/patches/caps-fn.patch)
 [[ $selection != fcitx5-shift ]] || patches+=(features/keyboard-input/patches/shift.patch)
 # Fractional pixel alignment is an explicit opt-in, separate from general Hyprland patches.

@@ -1,0 +1,15 @@
+{
+  "input_method": "caps-fn",
+  "features": {
+    "workspace-navigation": true,
+    "tab-shortcuts": true,
+    "chinese-fonts": true,
+    "keyboard-input": true,
+    "menu-selection-memory": true,
+    "system-tray": true,
+    "window-focus-gestures": false,
+    "display-controls": false,
+    "passwordless-lock": false,
+    "vscode-scrolling": false
+  }
+}

@@ -2,6 +2,7 @@
 from contextlib import redirect_stdout
 import importlib.util
 import io
+import json
 import os
 from pathlib import Path
 import subprocess
@@ -46,6 +47,34 @@ class RecommendedInstallationTests(unittest.TestCase):
         self.assertIn('omarchy plugin enable display-controls', plan)
         self.assertIn('omarchy plugin enable passwordless-lock', plan)
         self.assertIn('features/vscode-scrolling/configure.cjs --apply', plan)
+
+    def test_recommended_file_drives_selection(self):
+        profile = installer.load_profile()
+        profile['input_method'] = 'shift'
+        for feature in ('workspace-navigation', 'tab-shortcuts', 'chinese-fonts', 'menu-selection-memory'):
+            profile['features'][feature] = False
+        with tempfile.TemporaryDirectory() as directory:
+            file = Path(directory) / 'profile.json'
+            file.write_text(json.dumps(profile))
+            with patch.object(installer, 'PROFILE', file):
+                plan = self.preview()
+        self.assertIn('--profile shift', plan)
+        self.assertNotIn('--only workspace', plan)
+        self.assertNotIn('--only tab-shortcuts', plan)
+        self.assertNotIn('--only fonts', plan)
+        self.assertNotIn('fc-cache -f', plan)
+        self.assertNotIn('omarchy plugin enable menu-selection-memory', plan)
+        self.assertIn('omarchy plugin enable system-tray', plan)
+
+    def test_profile_requires_real_booleans(self):
+        profile = installer.load_profile()
+        profile['features']['chinese-fonts'] = 'false'
+        with tempfile.TemporaryDirectory() as directory:
+            file = Path(directory) / 'profile.json'
+            file.write_text(json.dumps(profile))
+            with patch.object(installer, 'PROFILE', file):
+                with self.assertRaises(RuntimeError):
+                    installer.load_profile()
 
     def test_apply_waits_for_discovery_before_enabling_plugins(self):
         calls = []

@@ -13,6 +13,25 @@ import sys
 import time
 
 ROOT = Path(__file__).resolve().parent
+PROFILE = ROOT / 'profiles/recommended.json'
+FEATURES = {
+    'workspace-navigation', 'tab-shortcuts', 'chinese-fonts', 'keyboard-input',
+    'menu-selection-memory', 'system-tray', 'window-focus-gestures',
+    'display-controls', 'passwordless-lock', 'vscode-scrolling',
+}
+
+
+def load_profile():
+    """Read and validate the single source of recommended activation defaults."""
+    profile = json.loads(PROFILE.read_text())
+    if profile.get('input_method') not in ('caps-fn', 'shift'):
+        raise RuntimeError('The profile input_method must be caps-fn or shift.')
+    features = profile.get('features')
+    if not isinstance(features, dict) or set(features) != FEATURES:
+        raise RuntimeError('The recommended profile must declare every supported feature.')
+    if any(type(enabled) is not bool for enabled in features.values()):
+        raise RuntimeError('Feature selections must be JSON booleans.')
+    return profile
 
 
 def main():
@@ -20,12 +39,24 @@ def main():
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument('--apply', action='store_true', help='install dependencies, configure and activate')
     mode.add_argument('--dry-run', action='store_true', help='print the complete plan (default)')
-    parser.add_argument('--input-method', choices=('caps-fn', 'shift'), default='caps-fn')
-    parser.add_argument('--with-two-finger-focus', action='store_true')
-    parser.add_argument('--with-display-controls', action='store_true')
-    parser.add_argument('--with-passwordless-lock', action='store_true')
-    parser.add_argument('--with-vscode-inertia', action='store_true')
+    parser.add_argument('--input-method', choices=('caps-fn', 'shift'))
+    parser.add_argument('--with-two-finger-focus', action='store_true', default=None)
+    parser.add_argument('--with-display-controls', action='store_true', default=None)
+    parser.add_argument('--with-passwordless-lock', action='store_true', default=None)
+    parser.add_argument('--with-vscode-inertia', action='store_true', default=None)
     args = parser.parse_args()
+    profile = load_profile()
+    features = profile['features'].copy()
+    input_method = args.input_method or profile['input_method']
+    overrides = {
+        'window-focus-gestures': args.with_two_finger_focus,
+        'display-controls': args.with_display_controls,
+        'passwordless-lock': args.with_passwordless_lock,
+        'vscode-scrolling': args.with_vscode_inertia,
+    }
+    for name, enabled in overrides.items():
+        if enabled is not None:
+            features[name] = enabled
     if os.geteuid() == 0:
         raise RuntimeError('Run this script as the desktop user. Individual stages request sudo as needed.')
 
@@ -43,32 +74,43 @@ def main():
             lock = resources.enter_context((parent / 'recommended-install.lock').open('a'))
             fcntl.flock(lock, fcntl.LOCK_EX)
 
-        packages = ['ttf-sarasa-gothic', 'noto-fonts-cjk']
-        if args.input_method == 'caps-fn':
+        packages = []
+        if features['chinese-fonts']:
+            packages.extend(['ttf-sarasa-gothic', 'noto-fonts-cjk'])
+        if features['keyboard-input'] and input_method == 'caps-fn':
             packages.append('keyd')
-        if args.with_two_finger_focus:
+        if features['window-focus-gestures']:
             packages.extend(['gcc', 'pkgconf'])
-        if args.with_passwordless_lock:
+        if features['passwordless-lock']:
             packages.append('ffmpegthumbnailer')
-        plugins = ['menu-selection-memory', 'system-tray']
-        if args.with_display_controls:
-            plugins.append('display-controls')
-        if args.with_passwordless_lock:
-            plugins.append('passwordless-lock')
+        plugins = [name for name in ('menu-selection-memory', 'system-tray',
+                   'display-controls', 'passwordless-lock') if features[name]]
 
         for plugin in plugins:
             run('omarchy', 'plugin', 'validate', ROOT / 'features' / plugin / 'plugin')
-        run('omarchy', 'pkg', 'add', *packages)
-        run('bash', ROOT / 'installer/links.sh', '--apply')
-        run('bash', ROOT / 'installer/patches.sh', '--apply', '--only', 'hyprland')
-        run(sys.executable, ROOT / 'features/keyboard-input/configure.py', '--apply', '--profile', args.input_method)
-        selection = '--enable' if args.with_two_finger_focus else '--disable'
+        if packages:
+            run('omarchy', 'pkg', 'add', *packages)
+        run('bash', ROOT / 'installer/links.sh', '--apply', '--only', 'hyprland')
+        if features['chinese-fonts']:
+            run('bash', ROOT / 'installer/links.sh', '--apply', '--only', 'fonts')
+        if plugins:
+            run('bash', ROOT / 'installer/links.sh', '--apply', '--only', 'shell')
+        if features['workspace-navigation']:
+            run('bash', ROOT / 'installer/patches.sh', '--apply', '--only', 'workspace')
+        if features['tab-shortcuts']:
+            run('bash', ROOT / 'installer/patches.sh', '--apply', '--only', 'tab-shortcuts')
+        # The independent loader is inert until the feature's opt-in marker exists.
+        run('bash', ROOT / 'installer/patches.sh', '--apply', '--only', 'window-focus')
+        if features['keyboard-input']:
+            run(sys.executable, ROOT / 'features/keyboard-input/configure.py', '--apply', '--profile', input_method)
+        selection = '--enable' if features['window-focus-gestures'] else '--disable'
         run(sys.executable, ROOT / 'features/window-focus-gestures/configure.py', '--apply', selection)
-        if args.with_display_controls:
+        if features['display-controls']:
             run('bash', ROOT / 'installer/patches.sh', '--apply', '--only', 'display')
-        if args.with_vscode_inertia:
+        if features['vscode-scrolling']:
             run('node', ROOT / 'features/vscode-scrolling/configure.cjs', '--apply')
-        run('fc-cache', '-f')
+        if features['chinese-fonts']:
+            run('fc-cache', '-f')
         run('omarchy', 'shell', 'shell', 'rescanPlugins')
         if args.apply:
             for _ in range(40):
