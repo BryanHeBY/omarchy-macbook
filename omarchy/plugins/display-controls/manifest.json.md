@@ -1,5 +1,9 @@
 # manifest.json
 
+> **Optimized for Omarchy M (MacBook).** Part of a configuration and plugin
+> collection that brings familiar macOS workflows and a desktop experience
+> closer to native macOS.
+
 `display-controls` provides brightness, text size, monitor toggles and scale
 presets, derived from the Omarchy display panel.
 

@@ -1,5 +1,9 @@
 # VS Code touchpad inertia
 
+> **Optimized for Omarchy M (MacBook).** Part of a configuration and plugin
+> collection that brings familiar macOS workflows and a desktop experience
+> closer to native macOS.
+
 VS Code implements scrolling inside its editor. On Linux, the input stack sends
 finger movement and a stop event; the application implements continued motion
 after release. VS Code exposes this behavior through `editor.inertialScroll`,

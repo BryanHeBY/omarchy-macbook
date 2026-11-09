@@ -2,6 +2,9 @@
 
 [简体中文](README.zh-CN.md)
 
+**A collection of configurations and plugins optimized for Omarchy M (MacBook),
+bringing familiar macOS workflows and a desktop experience closer to native macOS.**
+
 Modular desktop customizations for Omarchy: workspace gestures, animations,
 application-aware tab shortcuts, Chinese fonts, input-method hotkeys and shell
 plugins. Symlinks and scoped patches let you select each component independently.

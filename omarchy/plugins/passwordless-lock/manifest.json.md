@@ -1,5 +1,9 @@
 # manifest.json
 
+> **Optimized for Omarchy M (MacBook).** Part of a configuration and plugin
+> collection that brings familiar macOS workflows and a desktop experience
+> closer to native macOS.
+
 The `passwordless-lock` manifest declares the display name, version, capabilities
 and entry points. The plugin dismisses the lock screen with a click or any key.
 

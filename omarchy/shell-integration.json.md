@@ -1,5 +1,9 @@
 # shell-integration.json
 
+> **Optimized for Omarchy M (MacBook).** Part of a configuration and plugin
+> collection that brings familiar macOS workflows and a desktop experience
+> closer to native macOS.
+
 Declarative reference for shell integration, including widget replacements,
 services, disabled plugins and pinned tray items.
 
