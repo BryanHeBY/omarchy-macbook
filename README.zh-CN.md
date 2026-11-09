@@ -11,10 +11,10 @@
 | 部分 | 效果 | 文件 |
 | --- | --- | --- |
 | 工作区手势 | 三指或四指横滑触发一次切换，支持空工作区 | `hyprland/workspace-gestures.lua` |
-| 窗口焦点手势 | 多窗口平铺时，双指横滑循环切换焦点 | `hyprland/plugins/two-finger-focus/` |
+| 窗口焦点手势 | 默认关闭，显式启用后双指横滑循环切换平铺窗口焦点 | `hyprland/plugins/two-finger-focus/` |
 | 工作区动画 | 缓出曲线和滑动过渡 | `hyprland/workspace-animation.lua` |
 | 标签页快捷键 | `Super+W` 关闭标签或文档，`Super+T` 新建标签或文档 | `hyprland/tab-shortcuts.lua` |
-| 输入法热键 | 左 Shift 直接切换中英文 | `input-method/fcitx5-hotkeys.patch` |
+| MacBook 键盘 | 默认 Caps Lock/Fn，保留原左 Shift 切换作为可选方案 | `input-method/` |
 | 中文字体 | Sarasa UI SC、Sarasa Mono SC 和 Noto CJK 回退 | `fonts/chinese-fonts.conf` |
 | 显示面板 | 1×、1.25×、1.6×、1.8×、1.9×、2×、3× 缩放档位 | `omarchy/plugins/display-controls/` |
 | 系统托盘 | 图标置顶、显隐和应用点击动作，包含 Clash 快捷启动 | `omarchy/plugins/system-tray/` |
@@ -25,6 +25,8 @@
 手势左滑进入下一个工作区，右滑进入上一个工作区。
 
 ### 双指窗口焦点切换
+
+该功能默认关闭，需要单独启用；仅编译插件不会自动生效。
 
 同一工作区有至少两个可见、可聚焦的平铺窗口，且指针位于平铺窗口内容上时，双指横滑按窗口从左到右、同列从上到下的顺序循环切换焦点。每次滑动最多切换一次，抬手后可以再次切换。
 
@@ -55,7 +57,7 @@
 - Bash、GNU patch、GNU coreutils、GNU awk、jq、util-linux（`flock`）和 Fontconfig。
 - VS Code 惯性滚动脚本需要 Node.js 18 或更新版本，以及支持 `editor.inertialScroll` 的 VS Code。
 - 回归测试使用 Lua、Node.js 和 G++。
-- 输入法热键需要 Fcitx5。
+- 输入法切换需要 Fcitx5，可选的 MacBook 键盘定制还需要 keyd 2.6 和 Python 3.10 或更新版本。
 - 中文字体需要 `ttf-sarasa-gothic` 和 `noto-fonts-cjk`。
 - Clash 快捷启动需要提供 `/usr/bin/clash-verge` 的应用包。
 - 锁屏视频背景缩略图需要 `ffmpegthumbnailer` 和 `flock`。
@@ -65,25 +67,38 @@
 ## 目录
 
 ```text
+docs/installation.md    推荐默认值与完整生效流程
+docs/macbook-keyboard.md Caps Lock/Fn 行为、安装与恢复说明
 docs/vscode-scrolling.md VS Code 惯性滚动与恢复说明
 fonts/                  中文字体规则
 hyprland/               Lua 模块与原生输入插件源码
-input-method/           Fcitx5 热键补丁
+input-method/           Fcitx5 补丁与 keyd 键盘映射
 install/symlinks.tsv     软链接清单
 omarchy/plugins/        Shell 插件及其完整本地依赖
 omarchy/shell-integration.json
                         插件接入的声明式参考
 patches/                Hyprland 模块加载补丁
+scripts/install.py      推荐的一键安装与生效入口
+scripts/configure-two-finger-focus.py
+                        双指焦点切换的独立启停入口
 scripts/install-links.sh
                         软链接预检、备份和安装入口
 scripts/apply-patches.sh
                         补丁检查、备份和应用入口
 scripts/build-two-finger-focus.sh
                         编译可选的双指焦点插件
+scripts/install-macbook-keyboard.py
+                        可选 Caps Lock/Fn 配置安装与备份
 scripts/configure-vscode-scroll.cjs
                         独立预览、备份并设置 VS Code 惯性滚动
 tests/vscode-scrolling.cjs
                         JSONC 编辑、备份、幂等与恢复选项测试
+tests/recommended-install.py
+                        默认选项及生效顺序测试
+tests/two-finger-loader.lua
+                        双指功能显式启用的加载测试
+tests/macbook-keyboard.py
+                        输入法迁移与键盘设备匹配测试
 tests/tab-shortcuts.lua  应用感知快捷键的 Lua 回归测试
 tests/two-finger-focus.cpp
                         双指手势状态与滚动转发回归测试
@@ -98,6 +113,24 @@ tests/install-scripts.cjs
 ## 接入配置
 
 以下命令在仓库根目录执行。仓库可以放在任意目录，脚本通过自身位置解析源码路径，目标配置路径使用 `$HOME`。
+
+### 推荐的一键安装
+
+```bash
+# 默认预览完整安装与生效计划。
+python3 scripts/install.py
+python3 scripts/install.py --apply
+
+# 选择原来的左 Shift 输入法切换方案。
+python3 scripts/install.py --apply --input-method shift
+
+# 显式开启双指切换窗口焦点。
+python3 scripts/install.py --apply --with-two-finger-focus
+```
+
+默认启用三／四指工作区手势、动画、标签页快捷键、中文字体、菜单记忆、托盘和 Caps Lock/Fn 输入法方案。双指焦点切换默认关闭，显示面板、免密锁屏和 VS Code 惯性滚动分别通过可选参数启用。脚本负责安装依赖、启用所选服务和插件、刷新字体、重载 Hyprland 并检查 Shell 响应。完整选项与失败恢复方式见 [安装说明](docs/installation.md)。
+
+以下分项命令适合只调整某一部分配置。
 
 ### 建立软链接
 
@@ -142,7 +175,7 @@ tests/install-scripts.cjs
 ./scripts/apply-patches.sh --apply --only fcitx5
 ```
 
-Hyprland 补丁分别在 `input.lua`、`bindings.lua`、`looknfeel.lua` 中接入对应模块。脚本识别已有的 `require(...)`，支持重复执行和部分接入。输入法补丁将 `Shift_L` 从 `AltTriggerKeys` 移入 `TriggerKeys`。
+Hyprland 补丁分别在 `input.lua`、`bindings.lua`、`looknfeel.lua` 中接入对应模块。脚本识别已有的 `require(...)`，支持重复执行和部分接入。输入法补丁移除默认的单按左 Shift 切换，由桌面键盘模块管理输入源切换。
 
 补丁应用前会检查全部选中项，并确认 Lua 模块链接指向当前仓库。待修改文件备份到 `${XDG_STATE_HOME:-$HOME/.local/state}/omarchy-macbook/patch-backups/`，执行失败时尝试恢复本次触及的文件。
 
@@ -176,13 +209,14 @@ omarchy restart shell
 
 ### 手势、动画和标签页快捷键
 
-启用双指焦点切换前，先编译原生插件。`workspace-gestures.lua` 会加载可选的 `two-finger-focus.lua` 模块，后者发现编译产物后加载插件。
+双指焦点切换需要显式启用标记和编译产物同时存在。独立脚本负责编译、保存选择、加载插件并验证 Hyprland，默认配置关闭该功能。
 
 ```bash
-./scripts/build-two-finger-focus.sh
-hyprctl reload
+python3 scripts/configure-two-finger-focus.py --apply --enable
 hyprctl plugin list
 hyprctl configerrors
+# 恢复应用自身的横向滚动。
+python3 scripts/configure-two-finger-focus.py --apply --disable
 ```
 
 编译产物位于 `${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-macbook/plugins/two-finger-focus.so`。Hyprland 升级后，需要用匹配的头文件重新编译。插件加载时校验版本和 ABI。修改插件源码并重新编译后，可卸载当前插件再重新加载配置。
@@ -238,14 +272,26 @@ node tests/display-controls.cjs
 
 恢复整数像素校验时，先在显示面板中选择与分辨率匹配的倍率，然后移除 `monitors.lua` 中对 `hypr.customizations.fractional-scaling` 的加载，并重载 Hyprland。显示面板通过 `omarchy plugin enable omarchy.monitor` 恢复内置版本。
 
-### 输入法
+### MacBook 键盘与输入法切换
+
+可选键盘定制提供 Caps Lock 长短按及 Globe/Fn 行为。短按 Caps Lock 或 Fn 切换输入源，单独长按 Caps Lock 达到 350ms 后进入英文大写锁定，再按一次退出大写。Fn+E 和 Control+Super+Space 打开 Emoji 面板，使用 Fn 组合键后不会再触发单击切源。
+
+```bash
+omarchy pkg add keyd
+python3 scripts/install-macbook-keyboard.py
+python3 scripts/install-macbook-keyboard.py --apply
+# 恢复原来的左 Shift 切换方案。
+python3 scripts/install-macbook-keyboard.py --apply --profile shift
+```
+
+先接入 Hyprland 软链接，再以桌面用户运行安装器。默认方案会备份现有绑定和输入法配置，加载键盘模块，并安装 root 所有的 keyd 配置及启用开机服务。可选的 `shift` 方案会恢复原来的左 Shift 主切换键并移除 Caps Lock/Fn 映射，两套方案都保留其他热键。设备使用经过验证的 Apple SPI Keyboard 完整指纹匹配，排除共用厂商和产品 ID 的触控板。支持范围、阈值调整、验证及恢复步骤见 [键盘说明](docs/macbook-keyboard.md)。
 
 ```bash
 systemctl --user restart omarchy-fcitx5.service
 systemctl --user is-active omarchy-fcitx5.service
 ```
 
-在新应用窗口按左 Shift，确认可以切换中英文。
+在新应用窗口短按 Caps Lock 或 Fn，确认可以切换中英文，再验证长按大写和 Fn+E 表情面板。原有 Super+I 也可切换输入源。
 
 ### 中文字体
 
@@ -310,6 +356,9 @@ omarchy restart shell
 ## 回归测试
 
 ```bash
+python3 tests/recommended-install.py
+python3 tests/macbook-keyboard.py
+lua tests/two-finger-loader.lua
 node tests/vscode-scrolling.cjs
 node tests/install-scripts.cjs
 node tests/display-controls.cjs

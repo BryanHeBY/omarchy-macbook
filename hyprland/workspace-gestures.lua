@@ -13,7 +13,7 @@ local function workspace_step(target)
   }
 end
 
--- Two-finger horizontal scrolling cycles focus in multi-window tiled workspaces.
+-- Two-finger focus switching is optional and requires its explicit enable marker.
 require("hypr.customizations.two-finger-focus")
 
 for _, fingers in ipairs({ 3, 4 }) do

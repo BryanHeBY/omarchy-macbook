@@ -14,10 +14,10 @@ plugins. Symlinks and scoped patches let you select each component independently
 | Component | Behavior | Source |
 | --- | --- | --- |
 | Workspace gestures | One switch per three- or four-finger horizontal swipe, including empty workspaces | `hyprland/workspace-gestures.lua` |
-| Window focus gestures | Cycle focus with two-finger horizontal swipes among tiled windows | `hyprland/plugins/two-finger-focus/` |
+| Window focus gestures | Opt-in two-finger horizontal focus cycling among tiled windows | `hyprland/plugins/two-finger-focus/` |
 | Workspace animations | Ease-out curve with slide transitions | `hyprland/workspace-animation.lua` |
 | Tab shortcuts | `Super+W` closes a tab or document; `Super+T` creates one | `hyprland/tab-shortcuts.lua` |
-| Input-method hotkeys | Left Shift directly toggles Chinese and English input | `input-method/fcitx5-hotkeys.patch` |
+| MacBook keyboard | Default Caps Lock/Fn profile with an alternative primary Left Shift profile | `input-method/` |
 | Chinese fonts | Sarasa UI SC, Sarasa Mono SC and Noto CJK fallbacks | `fonts/chinese-fonts.conf` |
 | Display controls | Scale presets of 1×, 1.25×, 1.6×, 1.8×, 1.9×, 2× and 3× | `omarchy/plugins/display-controls/` |
 | System tray | Pinning, visibility and activation, including Clash launch support | `omarchy/plugins/system-tray/` |
@@ -28,6 +28,9 @@ plugins. Symlinks and scoped patches let you select each component independently
 Swipe left to enter the next workspace and right to enter the previous workspace.
 
 ### Two-finger window focus
+
+This feature is disabled by default and requires explicit opt-in. Compiling the
+library alone does not enable it.
 
 When a workspace has at least two visible, focusable tiled windows and the pointer
 is over tiled window content, a two-finger horizontal swipe cycles focus. Windows
@@ -80,7 +83,7 @@ use this fallback.
 - The VS Code scrolling helper requires Node.js 18 or newer and a VS Code version
   supporting `editor.inertialScroll`.
 - Regression tests use Lua, Node.js and G++.
-- Fcitx5 for input-method hotkeys.
+- Fcitx5 for input switching, plus keyd 2.6 and Python 3.10 or newer for the optional MacBook keyboard integration.
 - `ttf-sarasa-gothic` and `noto-fonts-cjk` for Chinese fonts.
 - An application package providing `/usr/bin/clash-verge` for the Clash shortcut.
 - `ffmpegthumbnailer` and `flock` for lock-screen video background posters.
@@ -91,23 +94,36 @@ apply script stops and identifies the affected file.
 ## Layout
 
 ```text
+docs/installation.md    Recommended defaults and complete activation workflow
+docs/macbook-keyboard.md Caps Lock/Fn behavior, installation and recovery
 docs/vscode-scrolling.md Detailed VS Code inertia and recovery guide
 fonts/                  Chinese font rules
 hyprland/               Lua modules and native input plugin sources
-input-method/           Fcitx5 hotkey patch
+input-method/           Fcitx5 patch and keyd keyboard mapping
 install/symlinks.tsv     Symlink manifest
 omarchy/plugins/        Shell plugins with their local dependencies
 omarchy/shell-integration.json
                         Declarative integration reference
 patches/                Hyprland module-loader patches
+scripts/install.py      Recommended installation and activation entry point
+scripts/configure-two-finger-focus.py
+                        Explicit two-finger enable/disable helper
 scripts/install-links.sh
                         Symlink preflight, backup and installation
 scripts/apply-patches.sh
                         Patch checks, backups and application
 scripts/build-two-finger-focus.sh
                         Optional native focus plugin build
+scripts/install-macbook-keyboard.py
+                        Optional Caps Lock/Fn installation and backups
 scripts/configure-vscode-scroll.cjs
                         Standalone VS Code inertia preview and configuration
+tests/recommended-install.py
+                        Default selection and activation ordering tests
+tests/two-finger-loader.lua
+                        Explicit opt-in loader regression tests
+tests/macbook-keyboard.py
+                        Input-method migration and keyboard selector tests
 tests/tab-shortcuts.lua  Application-aware shortcut regression tests
 tests/two-finger-focus.cpp
                         Gesture state and scroll forwarding tests
@@ -127,6 +143,31 @@ companion `.md` documentation; other sources use comments in their native format
 Run these commands from the repository root. The repository can live anywhere:
 scripts resolve sources relative to themselves and user configuration under
 `$HOME`. The standalone VS Code helper also respects `$XDG_CONFIG_HOME`.
+
+### Recommended installation
+
+```bash
+# Preview the complete installation and activation plan.
+python3 scripts/install.py
+python3 scripts/install.py --apply
+
+# Select the original primary Left Shift profile.
+python3 scripts/install.py --apply --input-method shift
+
+# Explicitly opt into two-finger focus switching.
+python3 scripts/install.py --apply --with-two-finger-focus
+```
+
+The recommended defaults activate three-/four-finger workspace gestures,
+animations, tab shortcuts, Chinese fonts, menu memory, the system tray and
+Caps Lock/Fn input switching. Two-finger focus switching is disabled by default.
+Display controls, passwordless locking and VS Code inertia have individual opt-in
+flags. The installer installs dependencies, enables selected services/plugins,
+refreshes fonts, reloads Hyprland and checks the shell response. See the
+[installation guide](docs/installation.md) for the complete selection and recovery
+behavior.
+
+The component commands below are available for individual configuration steps.
 
 ### Install symlinks
 
@@ -179,8 +220,8 @@ scaling and passwordless locking require separate activation.
 
 Hyprland patches load modules from `input.lua`, `bindings.lua` and `looknfeel.lua`.
 The script recognizes existing `require(...)` calls, supports repeated runs and
-allows partial integration. The input-method patch moves `Shift_L` from
-`AltTriggerKeys` to `TriggerKeys`.
+allows partial integration. The input-method patch removes the stock solitary
+Left Shift toggle so input switching can be managed by the desktop keyboard module.
 
 All selected patches are checked before writing, including verification that the
 Lua module link points to this repository. Targets are backed up under
@@ -224,15 +265,16 @@ omarchy restart shell
 
 ### Gestures, animations and tab shortcuts
 
-Compile the native plugin before enabling two-finger focus switching.
-`workspace-gestures.lua` loads the optional `two-finger-focus.lua` module, which
-loads the plugin when its compiled library exists.
+Two-finger focus switching requires an explicit enable marker in addition to the
+compiled library. The dedicated helper builds the plugin, saves the selection,
+loads it and validates Hyprland. The default profile leaves the gesture disabled.
 
 ```bash
-./scripts/build-two-finger-focus.sh
-hyprctl reload
+python3 scripts/configure-two-finger-focus.py --apply --enable
 hyprctl plugin list
 hyprctl configerrors
+# Return to normal application horizontal scrolling.
+python3 scripts/configure-two-finger-focus.py --apply --disable
 ```
 
 The library is installed at
@@ -304,14 +346,40 @@ resolution, remove the `hypr.customizations.fractional-scaling` loader from
 `monitors.lua`, and reload Hyprland. Restore the built-in display panel with
 `omarchy plugin enable omarchy.monitor`.
 
-### Input method
+### MacBook keyboard and input switching
+
+The optional keyboard integration adds Caps Lock tap/hold and Globe/Fn actions.
+Tap Caps Lock or Fn to cycle input sources. Hold Caps Lock alone for 350 ms to
+enter direct English input with uppercase locked, then press it again to return
+to lowercase. Fn+E and Control+Super+Space open the Emoji panel. Fn combinations
+consume the solitary tap action.
+
+```bash
+omarchy pkg add keyd
+python3 scripts/install-macbook-keyboard.py
+python3 scripts/install-macbook-keyboard.py --apply
+# Restore the original Left Shift profile.
+python3 scripts/install-macbook-keyboard.py --apply --profile shift
+```
+
+Install the Hyprland symlink first and run the installer as the desktop user.
+The default profile backs up existing bindings and input settings, adds the
+keyboard module and installs a root-owned keyd configuration. The alternative
+`shift` profile restores the primary Left Shift trigger and removes the Caps/Fn
+mapping. Both profiles preserve unrelated hotkeys.
+The profile matches the tested Apple SPI Keyboard fingerprint and excludes the
+trackpad that shares its vendor/product ID. The installer enables keyd at boot.
+See the [keyboard guide](docs/macbook-keyboard.md) for supported hardware,
+thresholds, verification and recovery.
 
 ```bash
 systemctl --user restart omarchy-fcitx5.service
 systemctl --user is-active omarchy-fcitx5.service
 ```
 
-In a newly opened application, press Left Shift to verify Chinese/English toggling.
+In a newly opened application, tap Caps Lock or Fn to verify input switching,
+then check hold-to-uppercase and Fn+E. The existing Super+I shortcut also cycles
+input sources.
 
 ### Chinese fonts
 
@@ -403,6 +471,9 @@ omarchy restart shell
 ## Regression tests
 
 ```bash
+python3 tests/recommended-install.py
+python3 tests/macbook-keyboard.py
+lua tests/two-finger-loader.lua
 node tests/vscode-scrolling.cjs
 node tests/install-scripts.cjs
 node tests/display-controls.cjs

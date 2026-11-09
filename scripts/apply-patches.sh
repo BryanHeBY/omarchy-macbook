@@ -11,12 +11,13 @@ selection=all
 
 usage() {
   cat <<'HELP'
-Usage: scripts/apply-patches.sh [--dry-run | --apply] [--only hyprland | fcitx5 | display]
+Usage: scripts/apply-patches.sh [--dry-run | --apply] [--only hyprland | fcitx5 | fcitx5-shift | display]
 
   --dry-run   Check patch status (default)
   --apply     Back up targets and apply pending patches
   --only      Process one section; defaults to hyprland and fcitx5
               display is a separate opt-in patch for exact fractional scaling
+              fcitx5-shift retains the original primary Left Shift profile
 
 Before applying Hyprland patches, link customizations as listed in install/symlinks.tsv.
 HELP
@@ -28,7 +29,7 @@ while (( $# > 0 )); do
     --apply) mode=apply; shift ;;
     --only)
       selection=${2:-}
-      [[ $selection == hyprland || $selection == fcitx5 || $selection == display ]] || { usage >&2; exit 2; }
+      [[ $selection == hyprland || $selection == fcitx5 || $selection == fcitx5-shift || $selection == display ]] || { usage >&2; exit 2; }
       shift 2
       ;;
     -h|--help) usage; exit 0 ;;
@@ -42,6 +43,7 @@ if [[ $selection == all || $selection == hyprland ]]; then
   patches+=(patches/hyprland-input.patch patches/hyprland-bindings.patch patches/hyprland-looknfeel.patch)
 fi
 [[ $selection != all && $selection != fcitx5 ]] || patches+=(input-method/fcitx5-hotkeys.patch)
+[[ $selection != fcitx5-shift ]] || patches+=(input-method/fcitx5-shift-hotkeys.patch)
 # Fractional pixel alignment is an explicit opt-in, separate from general Hyprland patches.
 [[ $selection != display ]] || patches+=(patches/hyprland-monitors.patch)
 pending=()
@@ -59,7 +61,7 @@ patch_targets() {
     patches/hyprland-bindings.patch) printf '%s\n' .config/hypr/bindings.lua ;;
     patches/hyprland-looknfeel.patch) printf '%s\n' .config/hypr/looknfeel.lua ;;
     patches/hyprland-monitors.patch) printf '%s\n' .config/hypr/monitors.lua ;;
-    input-method/fcitx5-hotkeys.patch)
+    input-method/fcitx5-hotkeys.patch|input-method/fcitx5-shift-hotkeys.patch)
       printf '%s\n' .config/fcitx5/config
       ;;
   esac

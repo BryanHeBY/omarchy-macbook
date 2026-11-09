@@ -63,6 +63,12 @@ try {
   successful(run(home, 'apply-patches.sh', ['--apply', '--only', 'display']));
   assert.match(fs.readFileSync(path.join(home, '.config/hypr/monitors.lua'), 'utf8'), /require\("hypr.customizations.fractional-scaling"\)/);
 
+  // The original Shift patch stays available as an explicit stock-template option.
+  fs.copyFileSync('/usr/share/omarchy/config/fcitx5/config', path.join(home, '.config/fcitx5/config'));
+  successful(run(home, 'apply-patches.sh', ['--apply', '--only', 'fcitx5-shift']));
+  successful(run(home, 'apply-patches.sh', ['--apply', '--only', 'fcitx5-shift']));
+  assert.match(fs.readFileSync(path.join(home, '.config/fcitx5/config'), 'utf8'), /\[Hotkey\/TriggerKeys\]\n0=Shift_L/);
+
   // A conflict in one target must prevent changes to every selected target.
   fs.writeFileSync(path.join(home, '.config/hypr/input.lua'), originalInput);
   fs.writeFileSync(path.join(home, '.config/hypr/looknfeel.lua'), '-- incompatible template\n');
