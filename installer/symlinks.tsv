@@ -1,0 +1,12 @@
+# Group, repository source, and destination relative to HOME.
+hyprland	features/workspace-navigation/gestures.lua	.config/hypr/customizations/workspace-gestures.lua
+hyprland	features/workspace-navigation/animations.lua	.config/hypr/customizations/workspace-animation.lua
+hyprland	features/tab-shortcuts/hyprland.lua	.config/hypr/customizations/tab-shortcuts.lua
+hyprland	features/keyboard-input/hyprland.lua	.config/hypr/customizations/macbook-keyboard.lua
+hyprland	features/window-focus-gestures/hyprland.lua	.config/hypr/customizations/two-finger-focus.lua
+hyprland	features/display-controls/hyprland.lua	.config/hypr/customizations/fractional-scaling.lua
+fonts	features/chinese-fonts/fontconfig.conf	.config/fontconfig/conf.d/50-omarchy-input-method.conf
+shell	features/menu-selection-memory/plugin	.config/omarchy/plugins/menu-selection-memory
+shell	features/system-tray/plugin	.config/omarchy/plugins/system-tray
+shell	features/passwordless-lock/plugin	.config/omarchy/plugins/passwordless-lock
+shell	features/display-controls/plugin	.config/omarchy/plugins/display-controls

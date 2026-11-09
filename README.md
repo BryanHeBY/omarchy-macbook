@@ -13,16 +13,16 @@ plugins. Symlinks and scoped patches let you select each component independently
 
 | Component | Behavior | Source |
 | --- | --- | --- |
-| Workspace gestures | One switch per three- or four-finger horizontal swipe, including empty workspaces | `hyprland/workspace-gestures.lua` |
+| Workspace gestures | One switch per three- or four-finger horizontal swipe, including empty workspaces | `features/workspace-navigation/gestures.lua` |
 | Window focus gestures | Opt-in two-finger horizontal focus cycling among tiled windows | `hyprland/plugins/two-finger-focus/` |
-| Workspace animations | Ease-out curve with slide transitions | `hyprland/workspace-animation.lua` |
-| Tab shortcuts | `Super+W` closes a tab or document; `Super+T` creates one | `hyprland/tab-shortcuts.lua` |
+| Workspace animations | Ease-out curve with slide transitions | `features/workspace-navigation/animations.lua` |
+| Tab shortcuts | `Super+W` closes a tab or document; `Super+T` creates one | `features/tab-shortcuts/hyprland.lua` |
 | MacBook keyboard | Default Caps Lock/Fn profile with an alternative primary Left Shift profile | `input-method/` |
-| Chinese fonts | Sarasa UI SC, Sarasa Mono SC and Noto CJK fallbacks | `fonts/chinese-fonts.conf` |
+| Chinese fonts | Sarasa UI SC, Sarasa Mono SC and Noto CJK fallbacks | `features/chinese-fonts/fontconfig.conf` |
 | Display controls | Scale presets of 1×, 1.25×, 1.6×, 1.8×, 1.9×, 2× and 3× | `omarchy/plugins/display-controls/` |
 | System tray | Pinning, visibility and activation, including Clash launch support | `omarchy/plugins/system-tray/` |
 | Menu selection memory | Promote the latest choice for each menu and search query | `omarchy/plugins/menu-selection-memory/` |
-| VS Code inertia | Standalone helper for continued editor scrolling after finger release | `scripts/configure-vscode-scroll.cjs` |
+| VS Code inertia | Standalone helper for continued editor scrolling after finger release | `features/vscode-scrolling/configure.cjs` |
 | Passwordless lock | Enter the desktop with a click or any key | `omarchy/plugins/passwordless-lock/` |
 
 Swipe left to enter the next workspace and right to enter the previous workspace.
@@ -45,7 +45,7 @@ switch workspaces.
 This optional native Hyprland plugin handles touchpad horizontal scrolling. Its
 threshold is 18 accumulated input units, with horizontal movement at least 1.5
 times the vertical movement. Thresholds live in
-`hyprland/plugins/two-finger-focus/GestureState.hpp`. A sequence normally ends on
+`features/window-focus-gestures/native/GestureState.hpp`. A sequence normally ends on
 finger release; 400 ms without a scroll event also resets it to recover from a
 missing stop event.
 
@@ -69,7 +69,7 @@ behavior. The mappings follow application documentation:
 [WezTerm](https://wezterm.org/config/default-keys.html).
 
 Applications are identified by exact window classes or Omarchy browser tags.
-Extend the groups in `hyprland/tab-shortcuts.lua`. For other applications,
+Extend the groups in `features/tab-shortcuts/hyprland.lua`. For other applications,
 `Super+W` closes the window and `Super+T` performs no action. Foot and Alacritty
 use this fallback.
 
@@ -94,45 +94,14 @@ apply script stops and identifies the affected file.
 ## Layout
 
 ```text
-docs/installation.md    Recommended defaults and complete activation workflow
-docs/macbook-keyboard.md Caps Lock/Fn behavior, installation and recovery
-docs/vscode-scrolling.md Detailed VS Code inertia and recovery guide
-fonts/                  Chinese font rules
-hyprland/               Lua modules and native input plugin sources
-input-method/           Fcitx5 patch and keyd keyboard mapping
-install/symlinks.tsv     Symlink manifest
-omarchy/plugins/        Shell plugins with their local dependencies
-omarchy/shell-integration.json
-                        Declarative integration reference
-patches/                Hyprland module-loader patches
-scripts/install.py      Recommended installation and activation entry point
-scripts/configure-two-finger-focus.py
-                        Explicit two-finger enable/disable helper
-scripts/install-links.sh
-                        Symlink preflight, backup and installation
-scripts/apply-patches.sh
-                        Patch checks, backups and application
-scripts/build-two-finger-focus.sh
-                        Optional native focus plugin build
-scripts/install-macbook-keyboard.py
-                        Optional Caps Lock/Fn installation and backups
-scripts/configure-vscode-scroll.cjs
-                        Standalone VS Code inertia preview and configuration
-tests/recommended-install.py
-                        Default selection and activation ordering tests
-tests/two-finger-loader.lua
-                        Explicit opt-in loader regression tests
-tests/macbook-keyboard.py
-                        Input-method migration and keyboard selector tests
-tests/tab-shortcuts.lua  Application-aware shortcut regression tests
-tests/two-finger-focus.cpp
-                        Gesture state and scroll forwarding tests
-tests/display-controls.cjs
-                        Scale preset and persistence tests
-tests/install-scripts.cjs
-                        Installation, backups, idempotency and recovery tests
-tests/vscode-scrolling.cjs
-                        JSONC edits, backups, idempotency and disable tests
+install.py                 Recommended installation entry point
+features/                  Configuration, code and tests grouped by capability
+installer/                 Shared symlink and patch integration
+installer/symlinks.tsv     Deployment groups, source paths and user targets
+tests/installation/        Cross-feature installation regression tests
+docs/                      Installation and architecture guides
+docs/examples/             Integration examples
+LICENSES/                  Upstream license notices
 ```
 
 Plugin filenames follow Omarchy loader conventions. Strict JSON files have
@@ -148,14 +117,14 @@ scripts resolve sources relative to themselves and user configuration under
 
 ```bash
 # Preview the complete installation and activation plan.
-python3 scripts/install.py
-python3 scripts/install.py --apply
+python3 install.py
+python3 install.py --apply
 
 # Select the original primary Left Shift profile.
-python3 scripts/install.py --apply --input-method shift
+python3 install.py --apply --input-method shift
 
 # Explicitly opt into two-finger focus switching.
-python3 scripts/install.py --apply --with-two-finger-focus
+python3 install.py --apply --with-two-finger-focus
 ```
 
 The recommended defaults activate three-/four-finger workspace gestures,
@@ -171,18 +140,18 @@ The component commands below are available for individual configuration steps.
 
 ### Install symlinks
 
-The first column in `install/symlinks.tsv` is relative to the repository root; the
+The first column in `installer/symlinks.tsv` is relative to the repository root; the
 second is relative to `$HOME`. You can install selected groups independently.
 
 ```bash
 # Preview by default, then write the links.
-./scripts/install-links.sh
-./scripts/install-links.sh --apply
+./installer/links.sh
+./installer/links.sh --apply
 
 # Select one configuration group.
-./scripts/install-links.sh --dry-run --only hyprland
-./scripts/install-links.sh --apply --only fonts
-./scripts/install-links.sh --apply --only shell
+./installer/links.sh --dry-run --only hyprland
+./installer/links.sh --apply --only fonts
+./installer/links.sh --apply --only shell
 ```
 
 The installer preflights selected entries and moves replaced files, directories
@@ -196,8 +165,8 @@ scaling and passwordless locking require separate activation.
 
 | Repository content | Loaded from |
 | --- | --- |
-| `hyprland/` | `~/.config/hypr/customizations` |
-| `fonts/chinese-fonts.conf` | `~/.config/fontconfig/conf.d/50-omarchy-input-method.conf` |
+| `features/*/*.lua` | `~/.config/hypr/customizations/*.lua` |
+| `features/chinese-fonts/fontconfig.conf` | `~/.config/fontconfig/conf.d/50-omarchy-input-method.conf` |
 | `omarchy/plugins/menu-selection-memory/` | `~/.config/omarchy/plugins/menu-selection-memory` |
 | `omarchy/plugins/system-tray/` | `~/.config/omarchy/plugins/system-tray` |
 | `omarchy/plugins/passwordless-lock/` | `~/.config/omarchy/plugins/passwordless-lock` |
@@ -207,15 +176,15 @@ scaling and passwordless locking require separate activation.
 
 ```bash
 # Read-only preview by default.
-./scripts/apply-patches.sh
+./installer/patches.sh
 
 # Back up targets and apply the default patch set.
-./scripts/apply-patches.sh --apply
+./installer/patches.sh --apply
 
 # Check or apply an individual section.
-./scripts/apply-patches.sh --dry-run --only hyprland
-./scripts/apply-patches.sh --apply --only hyprland
-./scripts/apply-patches.sh --apply --only fcitx5
+./installer/patches.sh --dry-run --only hyprland
+./installer/patches.sh --apply --only hyprland
+./installer/patches.sh --apply --only fcitx5
 ```
 
 Hyprland patches load modules from `input.lua`, `bindings.lua` and `looknfeel.lua`.
@@ -246,7 +215,7 @@ omarchy restart shell
 
 Manifest `clonedFrom` values identify built-in menu, tray, display and lock entry
 points, allowing existing routes and shortcuts to resolve to the selected clone.
-`omarchy/shell-integration.json` provides a field-level reference. Omarchy's CLI
+`docs/examples/shell-integration.json` provides a field-level reference. Omarchy's CLI
 writes the actual plugin state into the user's shell configuration.
 
 `system-tray` provides general tray management. Left-clicking Clash runs
@@ -270,11 +239,11 @@ compiled library. The dedicated helper builds the plugin, saves the selection,
 loads it and validates Hyprland. The default profile leaves the gesture disabled.
 
 ```bash
-python3 scripts/configure-two-finger-focus.py --apply --enable
+python3 features/window-focus-gestures/configure.py --apply --enable
 hyprctl plugin list
 hyprctl configerrors
 # Return to normal application horizontal scrolling.
-python3 scripts/configure-two-finger-focus.py --apply --disable
+python3 features/window-focus-gestures/configure.py --apply --disable
 ```
 
 The library is installed at
@@ -294,8 +263,8 @@ Check three- and four-finger horizontal swipes, empty workspaces, and `Super+W`
 and `Super+T` in supported applications. Test shortcut groups and gesture state:
 
 ```bash
-lua tests/tab-shortcuts.lua
-g++ -std=c++20 -Wall -Wextra tests/two-finger-focus.cpp -o /tmp/test-two-finger-focus
+lua features/tab-shortcuts/tests/shortcuts.lua
+g++ -std=c++20 -Wall -Wextra features/window-focus-gestures/tests/gesture-state.cpp -o /tmp/test-two-finger-focus
 /tmp/test-two-finger-focus
 ```
 
@@ -309,7 +278,7 @@ should continue to reach applications with multiple windows.
 1.8×, 1.9×, 2× and 3×. Brightness, text size and monitor management follow upstream
 behavior. Both the panel and its helper preserve requested fractional scales.
 
-Enable `hyprland/fractional-scaling.lua` separately. It sets
+Enable `features/display-controls/hyprland.lua` separately. It sets
 `debug.disable_scale_checks = true`, allowing fractional logical dimensions and
 possible pixel alignment or rounding errors. This option affects the entire
 Hyprland session. The `display` patch is separate from the default patch set.
@@ -317,8 +286,8 @@ See the [Hyprland configuration options](https://wiki.hypr.land/configuring/core
 
 ```bash
 # Install the customizations and display-controls links from the manifest first.
-./scripts/apply-patches.sh --dry-run --only display
-./scripts/apply-patches.sh --apply --only display
+./installer/patches.sh --dry-run --only display
+./installer/patches.sh --apply --only display
 hyprctl reload
 hyprctl configerrors
 omarchy shell shell rescanPlugins
@@ -335,10 +304,10 @@ requests. Sources are regular repository files linked through the user plugin
 directory.
 
 ```bash
-bash omarchy/plugins/display-controls/set-scale.sh 1.8
+bash features/display-controls/plugin/set-scale.sh 1.8
 hyprctl monitors -j
 omarchy shell omarchy.monitor state
-node tests/display-controls.cjs
+node features/display-controls/tests/scaling.cjs
 ```
 
 To restore integer-pixel checks, first select a scale compatible with the monitor
@@ -356,10 +325,10 @@ consume the solitary tap action.
 
 ```bash
 omarchy pkg add keyd
-python3 scripts/install-macbook-keyboard.py
-python3 scripts/install-macbook-keyboard.py --apply
+python3 features/keyboard-input/configure.py
+python3 features/keyboard-input/configure.py --apply
 # Restore the original Left Shift profile.
-python3 scripts/install-macbook-keyboard.py --apply --profile shift
+python3 features/keyboard-input/configure.py --apply --profile shift
 ```
 
 Install the Hyprland symlink first and run the installer as the desktop user.
@@ -369,7 +338,7 @@ keyboard module and installs a root-owned keyd configuration. The alternative
 mapping. Both profiles preserve unrelated hotkeys.
 The profile matches the tested Apple SPI Keyboard fingerprint and excludes the
 trackpad that shares its vendor/product ID. The installer enables keyd at boot.
-See the [keyboard guide](docs/macbook-keyboard.md) for supported hardware,
+See the [keyboard guide](features/keyboard-input/README.md) for supported hardware,
 thresholds, verification and recovery.
 
 ```bash
@@ -401,12 +370,12 @@ if they need to refresh font selection.
 standalone helper changes only the inertia setting and previews by default.
 
 ```bash
-node scripts/configure-vscode-scroll.cjs
-node scripts/configure-vscode-scroll.cjs --apply
+node features/vscode-scrolling/configure.cjs
+node features/vscode-scrolling/configure.cjs --apply
 # Set inertia back to false.
-node scripts/configure-vscode-scroll.cjs --apply --disable
+node features/vscode-scrolling/configure.cjs --apply --disable
 # Select another edition or named profile explicitly.
-node scripts/configure-vscode-scroll.cjs --settings /path/to/settings.json --apply
+node features/vscode-scrolling/configure.cjs --settings /path/to/settings.json --apply
 ```
 
 The default target is
@@ -421,7 +390,7 @@ Test in a long text file by scrolling vertically and lifting your fingers. If th
 effect is missing, check the active profile, workspace and language overrides;
 use **Developer: Reload Window** if needed. Other surfaces, including terminals,
 sidebars and webviews, may use different scroll implementations. See the
-[complete guide](docs/vscode-scrolling.md) for details and backup recovery.
+[complete guide](features/vscode-scrolling/README.md) for details and backup recovery.
 
 ### Shell plugins
 
@@ -454,7 +423,7 @@ Patch backups also retain paths relative to `$HOME`. Restore the relevant
 from the printed backup directory. After restoring Hyprland files, run
 `hyprctl reload` and `hyprctl configerrors`. Restart Fcitx5 after restoring its
 configuration. The VS Code helper has its own recovery instructions in the
-[scrolling guide](docs/vscode-scrolling.md).
+[scrolling guide](features/vscode-scrolling/README.md).
 
 Restore shell plugins using their built-in identifiers. Before restoring the
 display panel, select a compatible scale and remove the exact fractional-scaling
@@ -471,14 +440,14 @@ omarchy restart shell
 ## Regression tests
 
 ```bash
-python3 tests/recommended-install.py
-python3 tests/macbook-keyboard.py
-lua tests/two-finger-loader.lua
-node tests/vscode-scrolling.cjs
-node tests/install-scripts.cjs
-node tests/display-controls.cjs
-lua tests/tab-shortcuts.lua
-g++ -std=c++20 -Wall -Wextra tests/two-finger-focus.cpp -o /tmp/test-two-finger-focus
+python3 tests/installation/recommended.py
+python3 features/keyboard-input/tests/configure.py
+lua features/window-focus-gestures/tests/loader.lua
+node features/vscode-scrolling/tests/configure.cjs
+node tests/installation/configuration.cjs
+node features/display-controls/tests/scaling.cjs
+lua features/tab-shortcuts/tests/shortcuts.lua
+g++ -std=c++20 -Wall -Wextra features/window-focus-gestures/tests/gesture-state.cpp -o /tmp/test-two-finger-focus
 /tmp/test-two-finger-focus
 ```
 

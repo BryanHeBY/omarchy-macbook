@@ -1,7 +1,0 @@
-# Source paths are relative to the repository root. Destinations are relative to HOME.
-hyprland	.config/hypr/customizations
-fonts/chinese-fonts.conf	.config/fontconfig/conf.d/50-omarchy-input-method.conf
-omarchy/plugins/menu-selection-memory	.config/omarchy/plugins/menu-selection-memory
-omarchy/plugins/system-tray	.config/omarchy/plugins/system-tray
-omarchy/plugins/passwordless-lock	.config/omarchy/plugins/passwordless-lock
-omarchy/plugins/display-controls	.config/omarchy/plugins/display-controls

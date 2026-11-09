@@ -6,8 +6,8 @@ invocation prints its complete plan. `--apply` runs the plan with backups at the
 individual configuration stages.
 
 ```bash
-python3 scripts/install.py
-python3 scripts/install.py --apply
+python3 install.py
+python3 install.py --apply
 ```
 
 ## Recommended defaults
@@ -38,14 +38,14 @@ installation.
 
 ```bash
 # Recommended profile, including activation.
-python3 scripts/install.py --apply --input-method caps-fn
+python3 install.py --apply --input-method caps-fn
 
 # Original Left Shift input switching.
-python3 scripts/install.py --apply --input-method shift
+python3 install.py --apply --input-method shift
 
 # Switch only the keyboard/input profile.
-python3 scripts/install-macbook-keyboard.py --apply --profile shift
-python3 scripts/install-macbook-keyboard.py --apply --profile caps-fn
+python3 features/keyboard-input/configure.py --apply --profile shift
+python3 features/keyboard-input/configure.py --apply --profile caps-fn
 ```
 
 The Shift profile restores Left Shift as a primary Fcitx5 trigger, removes the
@@ -55,20 +55,20 @@ service when this was its only configuration. Other hotkeys are retained.
 Switch profiles with Caps Lock off.
 
 The original stock-template patch is preserved in
-`input-method/fcitx5-shift-hotkeys.patch` and can be applied with
-`scripts/apply-patches.sh --apply --only fcitx5-shift`. For switching an installed
+`features/keyboard-input/patches/shift.patch` and can be applied with
+`installer/patches.sh --apply --only fcitx5-shift`. For switching an installed
 profile, the keyboard installer handles the existing configuration directly.
-See the [keyboard guide](macbook-keyboard.md) for device support and recovery.
+See the [keyboard guide](../features/keyboard-input/README.md) for device support and recovery.
 
 ## Optional features
 
 Pass the desired options together with `--apply`.
 
 ```bash
-python3 scripts/install.py --apply --with-two-finger-focus
-python3 scripts/install.py --apply --with-display-controls
-python3 scripts/install.py --apply --with-passwordless-lock
-python3 scripts/install.py --apply --with-vscode-inertia
+python3 install.py --apply --with-two-finger-focus
+python3 install.py --apply --with-display-controls
+python3 install.py --apply --with-passwordless-lock
+python3 install.py --apply --with-vscode-inertia
 ```
 
 The default installation selects Caps Lock/Fn and disables two-finger focus
@@ -77,9 +77,9 @@ want that feature enabled. Independently select its state with the dedicated
 helper.
 
 ```bash
-python3 scripts/configure-two-finger-focus.py --enable
-python3 scripts/configure-two-finger-focus.py --apply --enable
-python3 scripts/configure-two-finger-focus.py --apply --disable
+python3 features/window-focus-gestures/configure.py --enable
+python3 features/window-focus-gestures/configure.py --apply --enable
+python3 features/window-focus-gestures/configure.py --apply --disable
 ```
 
 Enabling compiles the native plugin with matching Hyprland development headers,
