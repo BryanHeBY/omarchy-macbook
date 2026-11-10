@@ -11,13 +11,14 @@ selection=all
 
 usage() {
   cat <<'HELP'
-Usage: installer/patches.sh [--dry-run | --apply] [--only hyprland | workspace | tab-shortcuts | desktop-shortcuts | screenshot-shortcuts | window-focus | fcitx5 | fcitx5-shift | display]
+Usage: installer/patches.sh [--dry-run | --apply] [--only hyprland | workspace | tab-shortcuts | desktop-shortcuts | screenshot-shortcuts | touchpad-scrolling | touchpad-inertia | window-focus | fcitx5 | fcitx5-shift | display]
 
   --dry-run   Check patch status (default)
   --apply     Back up targets and apply pending patches
   --only      Process one section; defaults to hyprland and fcitx5
               display is a separate opt-in patch for exact fractional scaling
               screenshot-shortcuts is a separate opt-in for MacBook capture keys
+              touchpad-inertia is an independent, marker-controlled native plugin
               fcitx5-shift retains the original primary Left Shift profile
 
 Before applying Hyprland patches, link customizations as listed in installer/symlinks.tsv.
@@ -30,7 +31,7 @@ while (( $# > 0 )); do
     --apply) mode=apply; shift ;;
     --only)
       selection=${2:-}
-      [[ $selection == hyprland || $selection == workspace || $selection == tab-shortcuts || $selection == desktop-shortcuts || $selection == screenshot-shortcuts || $selection == window-focus || $selection == fcitx5 || $selection == fcitx5-shift || $selection == display ]] || { usage >&2; exit 2; }
+      [[ $selection == hyprland || $selection == workspace || $selection == tab-shortcuts || $selection == desktop-shortcuts || $selection == screenshot-shortcuts || $selection == touchpad-scrolling || $selection == touchpad-inertia || $selection == window-focus || $selection == fcitx5 || $selection == fcitx5-shift || $selection == display ]] || { usage >&2; exit 2; }
       shift 2
       ;;
     -h|--help) usage; exit 0 ;;
@@ -41,12 +42,14 @@ done
 command -v patch >/dev/null || { echo 'The patch command is required.' >&2; exit 1; }
 patches=()
 if [[ $selection == all || $selection == hyprland ]]; then
-  patches+=(installer/patches/hyprland-input.patch installer/patches/hyprland-bindings.patch installer/patches/hyprland-looknfeel.patch installer/patches/hyprland-window-focus.patch installer/patches/hyprland-desktop-shortcuts.patch)
+  patches+=(installer/patches/hyprland-input.patch installer/patches/hyprland-bindings.patch installer/patches/hyprland-looknfeel.patch installer/patches/hyprland-window-focus.patch installer/patches/hyprland-desktop-shortcuts.patch installer/patches/hyprland-touchpad-scrolling.patch)
 fi
 [[ $selection != workspace ]] || patches+=(installer/patches/hyprland-input.patch installer/patches/hyprland-looknfeel.patch)
 [[ $selection != tab-shortcuts ]] || patches+=(installer/patches/hyprland-bindings.patch)
 [[ $selection != desktop-shortcuts ]] || patches+=(installer/patches/hyprland-desktop-shortcuts.patch)
 [[ $selection != screenshot-shortcuts ]] || patches+=(installer/patches/hyprland-screenshot-shortcuts.patch)
+[[ $selection != touchpad-scrolling ]] || patches+=(installer/patches/hyprland-touchpad-scrolling.patch)
+[[ $selection != touchpad-inertia ]] || patches+=(installer/patches/hyprland-touchpad-inertia.patch)
 [[ $selection != window-focus ]] || patches+=(installer/patches/hyprland-window-focus.patch)
 [[ $selection != all && $selection != fcitx5 ]] || patches+=(features/keyboard-input/patches/caps-fn.patch)
 [[ $selection != fcitx5-shift ]] || patches+=(features/keyboard-input/patches/shift.patch)
@@ -64,6 +67,7 @@ run_patch() {
 patch_targets() {
   case "$1" in
     installer/patches/hyprland-window-focus.patch) printf '%s\n' .config/hypr/input.lua ;;
+    installer/patches/hyprland-touchpad-scrolling.patch|installer/patches/hyprland-touchpad-inertia.patch) printf '%s\n' .config/hypr/input.lua ;;
     installer/patches/hyprland-input.patch) printf '%s\n' .config/hypr/input.lua ;;
     installer/patches/hyprland-bindings.patch) printf '%s\n' .config/hypr/bindings.lua ;;
     installer/patches/hyprland-desktop-shortcuts.patch) printf '%s\n' .config/hypr/bindings.lua ;;
@@ -79,6 +83,8 @@ patch_targets() {
 loader_module() {
   case "$1" in
     installer/patches/hyprland-window-focus.patch) echo two-finger-focus ;;
+    installer/patches/hyprland-touchpad-scrolling.patch) echo touchpad-scrolling ;;
+    installer/patches/hyprland-touchpad-inertia.patch) echo touchpad-inertia ;;
     installer/patches/hyprland-input.patch) echo workspace-gestures ;;
     installer/patches/hyprland-bindings.patch) echo tab-shortcuts ;;
     installer/patches/hyprland-desktop-shortcuts.patch) echo desktop-shortcuts ;;

@@ -17,7 +17,7 @@ python3 install.py --apply
 
 第一条命令预览完整计划。第二条会安装依赖、备份配置、接入软链接与补丁、启用所选输入法方案及插件、刷新字体，并验证 Hyprland 和 Shell 的生效状态。
 
-默认选择集中在 [profiles/recommended.json](profiles/recommended.json)。推荐启用工作区导航、标签页与桌面编辑快捷键、中文字体、Caps Lock/Fn、菜单记忆和托盘。MacBook 截图快捷键、双指焦点切换、精确分数缩放、免密锁屏及 VS Code 惯性滚动需要显式选择。
+默认选择集中在 [profiles/recommended.json](profiles/recommended.json)。推荐启用工作区导航、标签页与桌面编辑快捷键、中文字体、Caps Lock/Fn、触摸板自然滚动、菜单记忆和托盘。MacBook 截图快捷键、双指焦点切换、精确分数缩放、免密锁屏、终端／菜单触摸板惯性及 VS Code 惯性滚动需要显式选择。
 
 ```bash
 # 使用原来的左 Shift 输入法切换方案。
@@ -29,6 +29,7 @@ python3 install.py --apply --with-display-controls
 python3 install.py --apply --with-passwordless-lock
 python3 install.py --apply --with-vscode-inertia
 python3 install.py --apply --with-macos-screenshots
+python3 install.py --apply --with-touchpad-inertia
 ```
 
 每次完整安装会应用所选输入法方案和双指状态，保留其他已有用户选择。各步骤分别备份，发生错误时停止后续步骤。独立配置和恢复方法见 [安装说明](docs/installation.zh-CN.md)。
@@ -46,6 +47,8 @@ python3 install.py --apply --with-macos-screenshots
 | 菜单选择记忆 | 同一菜单和搜索词优先显示上次选择 | [菜单选择记忆](features/menu-selection-memory/README.zh-CN.md) |
 | 系统托盘 | 图标置顶、显隐和点击动作，包含 Clash 启动 | [系统托盘](features/system-tray/README.zh-CN.md) |
 | 窗口焦点手势 | 可选双指横滑切换平铺窗口焦点 | [窗口焦点手势](features/window-focus-gestures/README.zh-CN.md) |
+| 触摸板滚动 | 两个方向采用自然滚动 | [触摸板滚动](features/touchpad-scrolling/README.zh-CN.md) |
+| 触摸板惯性 | 可选 Foot 和 Omarchy 菜单列表的纵向惯性，包含 Super+K | [触摸板惯性](features/touchpad-inertia/README.zh-CN.md) |
 | 显示面板 | 精确的 1×、1.25×、1.6×、1.8×、1.9×、2×、3× 档位 | [显示面板](features/display-controls/README.zh-CN.md) |
 | 免密锁屏 | 点击或任意按键进入桌面 | [免密锁屏](features/passwordless-lock/README.zh-CN.md) |
 | VS Code 滚动 | 编辑器抬手后的惯性滚动 | [VS Code 滚动](features/vscode-scrolling/README.zh-CN.md) |
@@ -71,7 +74,7 @@ LICENSES/                  上游许可声明
 - Python 3.10 或更新版本、Bash、GNU patch/coreutils/awk、jq、util-linux 和 Fontconfig。
 - 默认键盘方案使用经过验证的 Apple SPI Keyboard 完整指纹和 keyd 2.6，Shift 方案使用 Fcitx5 的主触发键。
 - 中文字体使用 `ttf-sarasa-gothic` 和 `noto-fonts-cjk`。
-- 可选双指插件针对 Hyprland 0.56.2，需要与运行版本匹配的头文件、pkg-config 和支持 C++26 的 G++。
+- 可选原生手势／惯性插件针对 Hyprland 0.56.2，需要与运行版本匹配的头文件、pkg-config 和支持 C++26 的 G++，惯性另需 libei 的 `libeis-1.0` 开发元数据。
 - VS Code 惯性滚动需要 Node.js 18 或更新版本，以及支持 `editor.inertialScroll` 的 VS Code。
 - Clash 托盘动作使用 `/usr/bin/clash-verge`，锁屏视频背景缩略图使用 `ffmpegthumbnailer` 和 `flock`。
 
@@ -90,6 +93,11 @@ node features/vscode-scrolling/tests/configure.cjs
 lua features/tab-shortcuts/tests/shortcuts.lua
 lua features/desktop-shortcuts/tests/shortcuts.lua
 lua features/screenshot-shortcuts/tests/shortcuts.lua
+lua features/touchpad-scrolling/tests/config.lua
+lua features/touchpad-inertia/tests/loader.lua
+python3 tests/installation/native_plugin.py
+g++ -std=c++20 -Wall -Wextra features/touchpad-inertia/tests/scroll-state.cpp -o /tmp/test-touchpad-inertia
+/tmp/test-touchpad-inertia
 lua features/window-focus-gestures/tests/loader.lua
 g++ -std=c++20 -Wall -Wextra features/window-focus-gestures/tests/gesture-state.cpp -o /tmp/test-window-focus
 /tmp/test-window-focus

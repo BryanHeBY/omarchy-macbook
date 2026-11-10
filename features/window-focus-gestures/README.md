@@ -50,3 +50,5 @@ hyprctl configerrors
 Check focus cycling with two tiled windows, then single-window horizontal
 scrolling and vertical scrolling. The helper backs up existing selection markers
 and attempts to restore the previous selection on failure.
+The shared native installer also backs up an existing library and restores its
+bytes and permissions when activation fails.

@@ -24,9 +24,9 @@ profile and plugins, refreshes fonts, and validates Hyprland and Shell activatio
 
 Defaults come from [profiles/recommended.json](profiles/recommended.json). They
 enable workspace navigation, tab and desktop editing shortcuts, Chinese fonts,
-Caps Lock/Fn input switching, menu memory and the system tray. MacBook screenshot
+Caps Lock/Fn input switching, natural touchpad scrolling, menu memory and the system tray. MacBook screenshot
 keys, two-finger focus switching, exact fractional display controls, passwordless
-locking and VS Code inertia are opt-in.
+locking, terminal/menu touchpad inertia and VS Code inertia are opt-in.
 
 ```bash
 # Choose the original primary Left Shift input switching profile.
@@ -38,6 +38,7 @@ python3 install.py --apply --with-display-controls
 python3 install.py --apply --with-passwordless-lock
 python3 install.py --apply --with-vscode-inertia
 python3 install.py --apply --with-macos-screenshots
+python3 install.py --apply --with-touchpad-inertia
 ```
 
 A full run applies the selected input and two-finger states. Other existing user
@@ -58,6 +59,8 @@ and independent component commands.
 | Menu selection memory | Promote the latest selection for each menu/query | [Menu selection memory](features/menu-selection-memory/README.md) |
 | System tray | Pinning, visibility and click actions, including Clash activation | [System tray](features/system-tray/README.md) |
 | Window focus gestures | Optional two-finger horizontal focus cycling among tiled windows | [Window focus gestures](features/window-focus-gestures/README.md) |
+| Touchpad scrolling | Natural scrolling on both touchpad axes | [Touchpad scrolling](features/touchpad-scrolling/README.md) |
+| Touchpad inertia | Optional vertical momentum in Foot and Omarchy menu lists, including Super+K | [Touchpad inertia](features/touchpad-inertia/README.md) |
 | Display controls | Exact scale presets of 1×, 1.25×, 1.6×, 1.8×, 1.9×, 2× and 3× | [Display controls](features/display-controls/README.md) |
 | Passwordless lock | Dismiss the lock screen with a click or any key | [Passwordless lock](features/passwordless-lock/README.md) |
 | VS Code scrolling | Continued editor scrolling after finger release | [VS Code scrolling](features/vscode-scrolling/README.md) |
@@ -89,8 +92,9 @@ links. Runtime data belongs in user XDG directories. Read the
 - The default keyboard profile targets the tested Apple SPI Keyboard fingerprint
   and uses keyd 2.6. The Shift profile supports the Fcitx5 primary Shift trigger.
 - Chinese fonts use `ttf-sarasa-gothic` and `noto-fonts-cjk`.
-- Optional focus gestures target Hyprland 0.56.2 and require matching development
-  headers, pkg-config and a C++26-capable G++.
+- Optional native gestures/inertia target Hyprland 0.56.2 and require matching
+  development headers, pkg-config and a C++26-capable G++. Inertia also uses libei's
+  `libeis-1.0` development metadata.
 - VS Code inertia requires Node.js 18 or newer and a version of VS Code supporting
   `editor.inertialScroll`.
 - The Clash tray shortcut uses `/usr/bin/clash-verge`. Video lock backgrounds use
@@ -112,6 +116,11 @@ node features/vscode-scrolling/tests/configure.cjs
 lua features/tab-shortcuts/tests/shortcuts.lua
 lua features/desktop-shortcuts/tests/shortcuts.lua
 lua features/screenshot-shortcuts/tests/shortcuts.lua
+lua features/touchpad-scrolling/tests/config.lua
+lua features/touchpad-inertia/tests/loader.lua
+python3 tests/installation/native_plugin.py
+g++ -std=c++20 -Wall -Wextra features/touchpad-inertia/tests/scroll-state.cpp -o /tmp/test-touchpad-inertia
+/tmp/test-touchpad-inertia
 lua features/window-focus-gestures/tests/loader.lua
 g++ -std=c++20 -Wall -Wextra features/window-focus-gestures/tests/gesture-state.cpp -o /tmp/test-window-focus
 /tmp/test-window-focus

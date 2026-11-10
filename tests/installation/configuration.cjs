@@ -83,6 +83,15 @@ try {
   successful(run(selectedHome, 'patches.sh', ['--apply', '--only', 'window-focus']));
   selectedInput = fs.readFileSync(path.join(selectedHome, '.config/hypr/input.lua'), 'utf8');
   assert.match(selectedInput, /require\("hypr.customizations.two-finger-focus"\)/);
+  successful(run(selectedHome, 'patches.sh', ['--apply', '--only', 'touchpad-scrolling']));
+  successful(run(selectedHome, 'patches.sh', ['--apply', '--only', 'touchpad-scrolling']));
+  selectedInput = fs.readFileSync(path.join(selectedHome, '.config/hypr/input.lua'), 'utf8');
+  assert.match(selectedInput, /require\("hypr.customizations.touchpad-scrolling"\)/);
+  assert(!selectedInput.includes('hypr.customizations.touchpad-inertia'));
+  successful(run(selectedHome, 'patches.sh', ['--apply', '--only', 'touchpad-inertia']));
+  successful(run(selectedHome, 'patches.sh', ['--apply', '--only', 'touchpad-inertia']));
+  selectedInput = fs.readFileSync(path.join(selectedHome, '.config/hypr/input.lua'), 'utf8');
+  assert.match(selectedInput, /require\("hypr.customizations.touchpad-inertia"\)/);
   successful(run(selectedHome, 'patches.sh', ['--apply', '--only', 'tab-shortcuts']));
   assert.match(fs.readFileSync(path.join(selectedHome, '.config/hypr/bindings.lua'), 'utf8'), /require\("hypr.customizations.tab-shortcuts"\)/);
   successful(run(selectedHome, 'patches.sh', ['--apply', '--only', 'desktop-shortcuts']));
@@ -107,6 +116,8 @@ try {
   successful(run(home, 'patches.sh', ['--apply']));
   successful(run(home, 'patches.sh', ['--apply']));
   assert.match(fs.readFileSync(path.join(home, '.config/hypr/input.lua'), 'utf8'), /require\("hypr.customizations.two-finger-focus"\)/);
+  assert.match(fs.readFileSync(path.join(home, '.config/hypr/input.lua'), 'utf8'), /require\("hypr.customizations.touchpad-scrolling"\)/);
+  assert(!fs.readFileSync(path.join(home, '.config/hypr/input.lua'), 'utf8').includes('hypr.customizations.touchpad-inertia'));
   assert(!fs.readFileSync(path.join(home, '.config/hypr/bindings.lua'), 'utf8').includes('hypr.customizations.screenshot-shortcuts'));
   successful(run(home, 'patches.sh', ['--apply', '--only', 'display']));
   successful(run(home, 'patches.sh', ['--apply', '--only', 'display']));

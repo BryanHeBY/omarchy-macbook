@@ -19,6 +19,7 @@ FEATURES = {
     'chinese-fonts', 'keyboard-input',
     'menu-selection-memory', 'system-tray', 'window-focus-gestures',
     'display-controls', 'passwordless-lock', 'vscode-scrolling',
+    'touchpad-scrolling', 'touchpad-inertia',
 }
 
 
@@ -46,6 +47,7 @@ def main():
     parser.add_argument('--with-passwordless-lock', action='store_true', default=None)
     parser.add_argument('--with-vscode-inertia', action='store_true', default=None)
     parser.add_argument('--with-macos-screenshots', action='store_true', default=None)
+    parser.add_argument('--with-touchpad-inertia', action='store_true', default=None)
     args = parser.parse_args()
     profile = load_profile()
     features = profile['features'].copy()
@@ -56,6 +58,7 @@ def main():
         'passwordless-lock': args.with_passwordless_lock,
         'vscode-scrolling': args.with_vscode_inertia,
         'screenshot-shortcuts': args.with_macos_screenshots,
+        'touchpad-inertia': args.with_touchpad_inertia,
     }
     for name, enabled in overrides.items():
         if enabled is not None:
@@ -82,8 +85,10 @@ def main():
             packages.extend(['ttf-sarasa-gothic', 'noto-fonts-cjk'])
         if features['keyboard-input'] and input_method == 'caps-fn':
             packages.append('keyd')
-        if features['window-focus-gestures']:
+        if features['window-focus-gestures'] or features['touchpad-inertia']:
             packages.extend(['gcc', 'pkgconf'])
+        if features['touchpad-inertia']:
+            packages.append('libei')
         if features['passwordless-lock']:
             packages.append('ffmpegthumbnailer')
         plugins = [name for name in ('menu-selection-memory', 'system-tray',
@@ -100,6 +105,11 @@ def main():
             run('bash', ROOT / 'installer/links.sh', '--apply', '--only', 'shell')
         if features['workspace-navigation']:
             run('bash', ROOT / 'installer/patches.sh', '--apply', '--only', 'workspace')
+        if features['touchpad-scrolling']:
+            run('bash', ROOT / 'installer/patches.sh', '--apply', '--only', 'touchpad-scrolling')
+        if features['touchpad-inertia']:
+            run('bash', ROOT / 'installer/patches.sh', '--apply', '--only', 'touchpad-inertia')
+            run(sys.executable, ROOT / 'features/touchpad-inertia/configure.py', '--apply', '--enable')
         if features['tab-shortcuts']:
             run('bash', ROOT / 'installer/patches.sh', '--apply', '--only', 'tab-shortcuts')
         if features['desktop-shortcuts']:

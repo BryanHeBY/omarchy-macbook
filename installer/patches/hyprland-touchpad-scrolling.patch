@@ -1,0 +1,13 @@
+# Omarchy 4.5 Lua configuration loader for touchpad-scrolling.
+--- a/.config/hypr/input.lua
++++ b/.config/hypr/input.lua
+@@ -44,6 +44,9 @@
+ --   },
+ -- })
+ 
++-- Load the touchpad-scrolling customization.
++require("hypr.customizations.touchpad-scrolling")
++
+ -- App-specific touchpad scroll speeds.
+ -- o.window("(Alacritty|kitty)", { scroll_touchpad = 1.5 })
+ -- o.window("foot", { scroll_touchpad = 2.0 })

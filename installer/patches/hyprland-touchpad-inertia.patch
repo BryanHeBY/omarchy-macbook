@@ -1,0 +1,9 @@
+# Omarchy 4.5 Lua configuration loader for touchpad-inertia.
+--- a/.config/hypr/input.lua
++++ b/.config/hypr/input.lua
+@@ -2,2 +2,5 @@
+ -- replace Omarchy's defaults.
++
++-- Load the touchpad-inertia customization.
++require("hypr.customizations.touchpad-inertia")
+ 

@@ -18,6 +18,8 @@ Omarchy MacBook 按功能组织桌面行为。每个 feature 维护理解、配�
 
 `installer/` 维护共享部署机制。`symlinks.tsv` 记录分组、仓库相对源路径和 HOME 相对目标路径。`links.sh` 备份并部署单个配置文件和完整插件目录，`patches.sh` 在预检查后应用指定范围的接入补丁，并支持失败回滚。Hyprland 加载补丁位于 `installer/patches/`，功能专属的 Fcitx5 补丁与键盘功能放在一起。
 
+`installer/build-native.sh` 和 `installer/native_plugin.py` 提供共享的原生编译、显式启停、串行化和动态库／标记恢复。窗口焦点手势与触摸板惯性保留各自的功能入口。
+
 工作区导航和窗口焦点手势使用独立加载器。可选焦点功能在加载原生代码前检查显式启用标记。
 
 ## 运行时布局

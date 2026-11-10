@@ -6,6 +6,8 @@ hyprland	features/desktop-shortcuts/hyprland.lua	.config/hypr/customizations/des
 hyprland	features/screenshot-shortcuts/hyprland.lua	.config/hypr/customizations/screenshot-shortcuts.lua
 hyprland	features/keyboard-input/hyprland.lua	.config/hypr/customizations/macbook-keyboard.lua
 hyprland	features/window-focus-gestures/hyprland.lua	.config/hypr/customizations/two-finger-focus.lua
+hyprland	features/touchpad-scrolling/hyprland.lua	.config/hypr/customizations/touchpad-scrolling.lua
+hyprland	features/touchpad-inertia/hyprland.lua	.config/hypr/customizations/touchpad-inertia.lua
 hyprland	features/display-controls/hyprland.lua	.config/hypr/customizations/fractional-scaling.lua
 fonts	features/chinese-fonts/fontconfig.conf	.config/fontconfig/conf.d/50-omarchy-input-method.conf
 shell	features/menu-selection-memory/plugin	.config/omarchy/plugins/menu-selection-memory

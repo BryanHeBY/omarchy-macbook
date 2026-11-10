@@ -23,12 +23,14 @@ python3 install.py --apply
 | Desktop editing and contextual deletion shortcuts | Enabled |
 | MacBook screenshot shortcuts | Explicit opt-in |
 | Chinese font fallback rules | Enabled |
+| Natural touchpad scrolling | Enabled |
 | Caps Lock/Fn input switching and Fn+E Emoji shortcut | Enabled |
 | Menu selection memory and system tray plugins | Enabled |
 | Two-finger focus switching | Explicit opt-in |
 | Exact fractional display controls | Explicit opt-in |
 | Passwordless lock dismissal | Explicit opt-in |
 | VS Code editor inertia | Explicit opt-in |
+| Foot and Omarchy menu touchpad inertia | Explicit opt-in |
 
 Two-finger horizontal movements reach applications under the default profile.
 Enabling two-finger focus switching assigns horizontal gestures to focus cycling
@@ -76,6 +78,7 @@ python3 install.py --apply --with-display-controls
 python3 install.py --apply --with-passwordless-lock
 python3 install.py --apply --with-vscode-inertia
 python3 install.py --apply --with-macos-screenshots
+python3 install.py --apply --with-touchpad-inertia
 ```
 
 The default installation selects Caps Lock/Fn and disables two-finger focus
@@ -110,6 +113,15 @@ replacement and application-specific behavior. MacBook screenshot bindings are
 an independent opt-in that preserves Print and other original screenshot keys.
 An existing screenshot loader is retained on later installations. Activation and
 removal are covered in the [screenshot guide](../features/screenshot-shortcuts/README.md).
+
+Natural scrolling is scoped to both touchpad axes. The optional native inertia
+feature covers vertical finger scrolling in Foot and the Omarchy menu layer,
+including Super+K and Super+Space. It requires matching Hyprland headers and
+libei development metadata. Its marker is retained on later full installations
+that omit the option. Use its dedicated helper to disable it. The feature guides
+cover independent activation, settings, verification and recovery.
+[Natural scrolling](../features/touchpad-scrolling/README.md),
+[touchpad inertia](../features/touchpad-inertia/README.md).
 
 ## Activation stages
 

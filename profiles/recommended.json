@@ -10,6 +10,8 @@
     "menu-selection-memory": true,
     "system-tray": true,
     "window-focus-gestures": false,
+    "touchpad-scrolling": true,
+    "touchpad-inertia": false,
     "display-controls": false,
     "passwordless-lock": false,
     "vscode-scrolling": false

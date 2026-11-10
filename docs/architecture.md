@@ -35,6 +35,10 @@ individual configuration files and complete plugin directories with backups.
 Hyprland loader patches live under `installer/patches/`; feature-specific Fcitx5
 patches live with the keyboard feature.
 
+`installer/build-native.sh` and `installer/native_plugin.py` provide shared native
+compilation, explicit activation, serialization and library/marker recovery.
+Window-focus gestures and touchpad inertia retain their own feature entry points.
+
 Workspace navigation and window-focus gestures have separate loaders. The
 optional focus feature checks its opt-in marker before loading native code.
 Compiling a library alone does not activate the feature.

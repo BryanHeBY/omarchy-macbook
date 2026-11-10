@@ -20,12 +20,14 @@ python3 install.py --apply
 | 桌面编辑与按场景处理的删除快捷键 | 启用 |
 | MacBook 截图快捷键 | 显式选用 |
 | 中文字体回退规则 | 启用 |
+| 触摸板自然滚动 | 启用 |
 | Caps Lock/Fn 输入法切换与 Fn+E 表情快捷键 | 启用 |
 | 菜单选择记忆和系统托盘插件 | 启用 |
 | 双指窗口焦点切换 | 显式选用 |
 | 精确分数缩放控制 | 显式选用 |
 | 免密解锁 | 显式选用 |
 | VS Code 编辑器惯性滚动 | 显式选用 |
+| Foot 和 Omarchy 菜单触摸板惯性 | 显式选用 |
 
 默认预设会将双指横向移动传递给应用。启用双指焦点切换后，当多个平铺窗口满足条件时，横向手势用于轮换焦点。三指和四指工作区手势独立于这一选择。
 
@@ -59,6 +61,7 @@ python3 install.py --apply --with-display-controls
 python3 install.py --apply --with-passwordless-lock
 python3 install.py --apply --with-vscode-inertia
 python3 install.py --apply --with-macos-screenshots
+python3 install.py --apply --with-touchpad-inertia
 ```
 
 默认安装选择 Caps Lock/Fn，并关闭双指焦点切换。后续完整安装时，如需保持双指功能启用，应继续传入对应参数。也可以通过独立工具选择其状态。
@@ -74,6 +77,8 @@ python3 features/window-focus-gestures/configure.py --apply --disable
 [显示控制面板](../features/display-controls/README.zh-CN.md) 会启用 `debug.disable_scale_checks`，允许非整数逻辑像素，可能产生对齐误差。[免密解锁](../features/passwordless-lock/README.zh-CN.md) 允许点击或任意按键进入会话。请按预期桌面行为选择这些选项。VS Code 选项会调用独立的 [滚动设置工具](../features/vscode-scrolling/README.zh-CN.md)。后续安装选用其他组件时，会保留已有的可选 Shell 插件选择。
 
 桌面编辑快捷键会替换部分 Omarchy 默认绑定，包括 Super+Backspace 透明度、Super+F 全屏和 Super+S 暂存区。完整替换关系与各应用行为见 [桌面快捷键说明](../features/desktop-shortcuts/README.zh-CN.md)。MacBook 截图绑定为独立可选功能，保留 Print 等原有截图键。后续安装会保留已有截图加载语句，启用与移除步骤见 [截图说明](../features/screenshot-shortcuts/README.zh-CN.md)。
+
+自然滚动作用于触摸板的两个方向。可选原生惯性功能覆盖 Foot 和 Omarchy 菜单层的纵向手指滚动，包含 Super+K 与 Super+Space。它需要匹配的 Hyprland 头文件及 libei 开发元数据。后续完整安装省略该选项时保留标记，需要关闭时使用独立工具。独立生效、设置、验证和恢复方法见功能文档。[自然滚动](../features/touchpad-scrolling/README.zh-CN.md)、[触摸板惯性](../features/touchpad-inertia/README.zh-CN.md)。
 
 ## 生效步骤
 
