@@ -15,7 +15,8 @@ import time
 ROOT = Path(__file__).resolve().parent
 PROFILE = ROOT / 'profiles/recommended.json'
 FEATURES = {
-    'workspace-navigation', 'tab-shortcuts', 'chinese-fonts', 'keyboard-input',
+    'workspace-navigation', 'tab-shortcuts', 'desktop-shortcuts', 'screenshot-shortcuts',
+    'chinese-fonts', 'keyboard-input',
     'menu-selection-memory', 'system-tray', 'window-focus-gestures',
     'display-controls', 'passwordless-lock', 'vscode-scrolling',
 }
@@ -44,6 +45,7 @@ def main():
     parser.add_argument('--with-display-controls', action='store_true', default=None)
     parser.add_argument('--with-passwordless-lock', action='store_true', default=None)
     parser.add_argument('--with-vscode-inertia', action='store_true', default=None)
+    parser.add_argument('--with-macos-screenshots', action='store_true', default=None)
     args = parser.parse_args()
     profile = load_profile()
     features = profile['features'].copy()
@@ -53,6 +55,7 @@ def main():
         'display-controls': args.with_display_controls,
         'passwordless-lock': args.with_passwordless_lock,
         'vscode-scrolling': args.with_vscode_inertia,
+        'screenshot-shortcuts': args.with_macos_screenshots,
     }
     for name, enabled in overrides.items():
         if enabled is not None:
@@ -99,6 +102,10 @@ def main():
             run('bash', ROOT / 'installer/patches.sh', '--apply', '--only', 'workspace')
         if features['tab-shortcuts']:
             run('bash', ROOT / 'installer/patches.sh', '--apply', '--only', 'tab-shortcuts')
+        if features['desktop-shortcuts']:
+            run('bash', ROOT / 'installer/patches.sh', '--apply', '--only', 'desktop-shortcuts')
+        if features['screenshot-shortcuts']:
+            run('bash', ROOT / 'installer/patches.sh', '--apply', '--only', 'screenshot-shortcuts')
         # The independent loader is inert until the feature's opt-in marker exists.
         run('bash', ROOT / 'installer/patches.sh', '--apply', '--only', 'window-focus')
         if features['keyboard-input']:

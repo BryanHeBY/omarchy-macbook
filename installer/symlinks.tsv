@@ -2,6 +2,8 @@
 hyprland	features/workspace-navigation/gestures.lua	.config/hypr/customizations/workspace-gestures.lua
 hyprland	features/workspace-navigation/animations.lua	.config/hypr/customizations/workspace-animation.lua
 hyprland	features/tab-shortcuts/hyprland.lua	.config/hypr/customizations/tab-shortcuts.lua
+hyprland	features/desktop-shortcuts/hyprland.lua	.config/hypr/customizations/desktop-shortcuts.lua
+hyprland	features/screenshot-shortcuts/hyprland.lua	.config/hypr/customizations/screenshot-shortcuts.lua
 hyprland	features/keyboard-input/hyprland.lua	.config/hypr/customizations/macbook-keyboard.lua
 hyprland	features/window-focus-gestures/hyprland.lua	.config/hypr/customizations/two-finger-focus.lua
 hyprland	features/display-controls/hyprland.lua	.config/hypr/customizations/fractional-scaling.lua

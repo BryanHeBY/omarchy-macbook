@@ -85,6 +85,15 @@ try {
   assert.match(selectedInput, /require\("hypr.customizations.two-finger-focus"\)/);
   successful(run(selectedHome, 'patches.sh', ['--apply', '--only', 'tab-shortcuts']));
   assert.match(fs.readFileSync(path.join(selectedHome, '.config/hypr/bindings.lua'), 'utf8'), /require\("hypr.customizations.tab-shortcuts"\)/);
+  successful(run(selectedHome, 'patches.sh', ['--apply', '--only', 'desktop-shortcuts']));
+  successful(run(selectedHome, 'patches.sh', ['--apply', '--only', 'desktop-shortcuts']));
+  let selectedBindings = fs.readFileSync(path.join(selectedHome, '.config/hypr/bindings.lua'), 'utf8');
+  assert.match(selectedBindings, /require\("hypr.customizations.desktop-shortcuts"\)/);
+  assert(!selectedBindings.includes('hypr.customizations.screenshot-shortcuts'));
+  successful(run(selectedHome, 'patches.sh', ['--apply', '--only', 'screenshot-shortcuts']));
+  successful(run(selectedHome, 'patches.sh', ['--apply', '--only', 'screenshot-shortcuts']));
+  selectedBindings = fs.readFileSync(path.join(selectedHome, '.config/hypr/bindings.lua'), 'utf8');
+  assert.match(selectedBindings, /require\("hypr.customizations.screenshot-shortcuts"\)/);
 
   // Patch against the matching installed Omarchy templates, never live config.
   fs.mkdirSync(path.join(home, '.config/fcitx5'), { recursive: true });
@@ -98,6 +107,7 @@ try {
   successful(run(home, 'patches.sh', ['--apply']));
   successful(run(home, 'patches.sh', ['--apply']));
   assert.match(fs.readFileSync(path.join(home, '.config/hypr/input.lua'), 'utf8'), /require\("hypr.customizations.two-finger-focus"\)/);
+  assert(!fs.readFileSync(path.join(home, '.config/hypr/bindings.lua'), 'utf8').includes('hypr.customizations.screenshot-shortcuts'));
   successful(run(home, 'patches.sh', ['--apply', '--only', 'display']));
   successful(run(home, 'patches.sh', ['--apply', '--only', 'display']));
   assert.match(fs.readFileSync(path.join(home, '.config/hypr/monitors.lua'), 'utf8'), /require\("hypr.customizations.fractional-scaling"\)/);

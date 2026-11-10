@@ -17,6 +17,8 @@ python3 install.py --apply
 | --- | --- |
 | 三指和四指切换工作区 | 启用 |
 | 工作区动画与按应用适配的标签页快捷键 | 启用 |
+| 桌面编辑与按场景处理的删除快捷键 | 启用 |
+| MacBook 截图快捷键 | 显式选用 |
 | 中文字体回退规则 | 启用 |
 | Caps Lock/Fn 输入法切换与 Fn+E 表情快捷键 | 启用 |
 | 菜单选择记忆和系统托盘插件 | 启用 |
@@ -56,6 +58,7 @@ python3 install.py --apply --with-two-finger-focus
 python3 install.py --apply --with-display-controls
 python3 install.py --apply --with-passwordless-lock
 python3 install.py --apply --with-vscode-inertia
+python3 install.py --apply --with-macos-screenshots
 ```
 
 默认安装选择 Caps Lock/Fn，并关闭双指焦点切换。后续完整安装时，如需保持双指功能启用，应继续传入对应参数。也可以通过独立工具选择其状态。
@@ -69,6 +72,8 @@ python3 features/window-focus-gestures/configure.py --apply --disable
 启用时使用与 Hyprland 匹配的开发头文件编译原生插件，创建 `${XDG_CONFIG_HOME:-$HOME/.config}/omarchy-macbook/two-finger-focus.enabled`，加载动态库并验证 Hyprland。关闭时移除标记、卸载动态库并重新加载配置。工具会备份已有标记、串行化更新，失败时尝试恢复此前选择。具体行为见 [窗口焦点手势](../features/window-focus-gestures/README.zh-CN.md)。
 
 [显示控制面板](../features/display-controls/README.zh-CN.md) 会启用 `debug.disable_scale_checks`，允许非整数逻辑像素，可能产生对齐误差。[免密解锁](../features/passwordless-lock/README.zh-CN.md) 允许点击或任意按键进入会话。请按预期桌面行为选择这些选项。VS Code 选项会调用独立的 [滚动设置工具](../features/vscode-scrolling/README.zh-CN.md)。后续安装选用其他组件时，会保留已有的可选 Shell 插件选择。
+
+桌面编辑快捷键会替换部分 Omarchy 默认绑定，包括 Super+Backspace 透明度、Super+F 全屏和 Super+S 暂存区。完整替换关系与各应用行为见 [桌面快捷键说明](../features/desktop-shortcuts/README.zh-CN.md)。MacBook 截图绑定为独立可选功能，保留 Print 等原有截图键。后续安装会保留已有截图加载语句，启用与移除步骤见 [截图说明](../features/screenshot-shortcuts/README.zh-CN.md)。
 
 ## 生效步骤
 

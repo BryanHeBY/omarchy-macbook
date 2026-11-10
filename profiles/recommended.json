@@ -3,6 +3,8 @@
   "features": {
     "workspace-navigation": true,
     "tab-shortcuts": true,
+    "desktop-shortcuts": true,
+    "screenshot-shortcuts": false,
     "chinese-fonts": true,
     "keyboard-input": true,
     "menu-selection-memory": true,

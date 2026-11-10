@@ -23,9 +23,10 @@ backs up configuration, installs links and patches, activates the selected input
 profile and plugins, refreshes fonts, and validates Hyprland and Shell activation.
 
 Defaults come from [profiles/recommended.json](profiles/recommended.json). They
-enable workspace navigation, tab shortcuts, Chinese fonts, Caps Lock/Fn input
-switching, menu memory and the system tray. Two-finger focus switching, exact
-fractional display controls, passwordless locking and VS Code inertia are opt-in.
+enable workspace navigation, tab and desktop editing shortcuts, Chinese fonts,
+Caps Lock/Fn input switching, menu memory and the system tray. MacBook screenshot
+keys, two-finger focus switching, exact fractional display controls, passwordless
+locking and VS Code inertia are opt-in.
 
 ```bash
 # Choose the original primary Left Shift input switching profile.
@@ -36,6 +37,7 @@ python3 install.py --apply --with-two-finger-focus
 python3 install.py --apply --with-display-controls
 python3 install.py --apply --with-passwordless-lock
 python3 install.py --apply --with-vscode-inertia
+python3 install.py --apply --with-macos-screenshots
 ```
 
 A full run applies the selected input and two-finger states. Other existing user
@@ -49,6 +51,8 @@ and independent component commands.
 | --- | --- | --- |
 | Workspace navigation | Discrete three-/four-finger switching, empty workspaces and eased slide animations | [Workspace navigation](features/workspace-navigation/README.md) |
 | Tab shortcuts | Super+W closes tabs/documents; Super+T creates tabs/documents according to the app | [Tab shortcuts](features/tab-shortcuts/README.md) |
+| Desktop shortcuts | Undo, redo, save, find, open, print, browser navigation and contextual Super+Backspace | [Desktop shortcuts](features/desktop-shortcuts/README.md) |
+| Screenshot shortcuts | Optional Super+Shift+3/4/5 and clipboard variants alongside Omarchy capture keys | [Screenshot shortcuts](features/screenshot-shortcuts/README.md) |
 | Keyboard input | Caps Lock tap/hold, Fn input switching and Fn+E emojis; optional Left Shift profile | [Keyboard input](features/keyboard-input/README.md) |
 | Chinese fonts | Sarasa UI/Mono SC with Noto CJK fallbacks | [Chinese fonts](features/chinese-fonts/README.md) |
 | Menu selection memory | Promote the latest selection for each menu/query | [Menu selection memory](features/menu-selection-memory/README.md) |
@@ -106,6 +110,8 @@ python3 features/keyboard-input/tests/configure.py
 node features/display-controls/tests/scaling.cjs
 node features/vscode-scrolling/tests/configure.cjs
 lua features/tab-shortcuts/tests/shortcuts.lua
+lua features/desktop-shortcuts/tests/shortcuts.lua
+lua features/screenshot-shortcuts/tests/shortcuts.lua
 lua features/window-focus-gestures/tests/loader.lua
 g++ -std=c++20 -Wall -Wextra features/window-focus-gestures/tests/gesture-state.cpp -o /tmp/test-window-focus
 /tmp/test-window-focus

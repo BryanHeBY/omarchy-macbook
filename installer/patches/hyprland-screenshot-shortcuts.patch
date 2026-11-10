@@ -1,0 +1,13 @@
+# Omarchy 4.5 Lua configuration loader for screenshot-shortcuts.
+--- a/.config/hypr/bindings.lua
++++ b/.config/hypr/bindings.lua
+@@ -12,6 +12,9 @@
+ -- To disable all preinstalled app/webapp bindings, set:
+ --   omarchy_preinstalled_bindings = false
+ 
++-- Load optional MacBook-style screenshot shortcuts.
++require("hypr.customizations.screenshot-shortcuts")
++
+ -- Add a new binding.
+ -- o.bind("SUPER + SHIFT + R", "SSH", "alacritty -e ssh your-server")
+ 

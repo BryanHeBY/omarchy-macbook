@@ -1,0 +1,13 @@
+# Omarchy 4.5 Lua configuration loader for desktop-shortcuts.
+--- a/.config/hypr/bindings.lua
++++ b/.config/hypr/bindings.lua
+@@ -19,6 +19,9 @@
+ -- This example replaces the default file manager with Flea.
+ -- o.rebind("SUPER + SHIFT + F", "File manager", { launch = "flea" })
+ 
++-- Load MacBook-style editing shortcuts.
++require("hypr.customizations.desktop-shortcuts")
++
+ -- Disable a default binding without replacing it.
+ -- hl.unbind("SUPER + SHIFT + B")
+ 

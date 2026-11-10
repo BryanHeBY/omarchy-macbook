@@ -20,6 +20,8 @@ python3 install.py --apply
 | --- | --- |
 | Three- and four-finger workspace switching | Enabled |
 | Workspace animations and application-aware tab shortcuts | Enabled |
+| Desktop editing and contextual deletion shortcuts | Enabled |
+| MacBook screenshot shortcuts | Explicit opt-in |
 | Chinese font fallback rules | Enabled |
 | Caps Lock/Fn input switching and Fn+E Emoji shortcut | Enabled |
 | Menu selection memory and system tray plugins | Enabled |
@@ -73,6 +75,7 @@ python3 install.py --apply --with-two-finger-focus
 python3 install.py --apply --with-display-controls
 python3 install.py --apply --with-passwordless-lock
 python3 install.py --apply --with-vscode-inertia
+python3 install.py --apply --with-macos-screenshots
 ```
 
 The default installation selects Caps Lock/Fn and disables two-finger focus
@@ -99,6 +102,14 @@ any key to enter the session. Select these options according to your intended
 desktop behavior. The VS Code option invokes its independent settings helper.
 Existing optional shell plugin selections are preserved during subsequent
 installations that select other components.
+
+Desktop editing shortcuts replace selected Omarchy defaults, including
+Super+Backspace transparency, Super+F full screen and Super+S scratchpad.
+The [desktop shortcut guide](../features/desktop-shortcuts/README.md) lists every
+replacement and application-specific behavior. MacBook screenshot bindings are
+an independent opt-in that preserves Print and other original screenshot keys.
+An existing screenshot loader is retained on later installations. Activation and
+removal are covered in the [screenshot guide](../features/screenshot-shortcuts/README.md).
 
 ## Activation stages
 

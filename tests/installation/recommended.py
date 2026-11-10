@@ -38,20 +38,24 @@ class RecommendedInstallationTests(unittest.TestCase):
         self.assertNotIn('features/vscode-scrolling/configure.cjs --apply', plan)
         self.assertIn('omarchy restart shell', plan)
         self.assertIn('hyprctl configerrors', plan)
+        self.assertIn('--only desktop-shortcuts', plan)
+        self.assertNotIn('--only screenshot-shortcuts', plan)
 
     def test_legacy_and_optional_features_are_explicit(self):
         plan = self.preview('--input-method', 'shift', '--with-two-finger-focus',
-                            '--with-display-controls', '--with-passwordless-lock', '--with-vscode-inertia')
+                            '--with-display-controls', '--with-passwordless-lock', '--with-vscode-inertia',
+                            '--with-macos-screenshots')
         self.assertIn('--profile shift', plan)
         self.assertIn('features/window-focus-gestures/configure.py --apply --enable', plan)
         self.assertIn('omarchy plugin enable display-controls', plan)
         self.assertIn('omarchy plugin enable passwordless-lock', plan)
         self.assertIn('features/vscode-scrolling/configure.cjs --apply', plan)
+        self.assertIn('--only screenshot-shortcuts', plan)
 
     def test_recommended_file_drives_selection(self):
         profile = installer.load_profile()
         profile['input_method'] = 'shift'
-        for feature in ('workspace-navigation', 'tab-shortcuts', 'chinese-fonts', 'menu-selection-memory'):
+        for feature in ('workspace-navigation', 'tab-shortcuts', 'desktop-shortcuts', 'chinese-fonts', 'menu-selection-memory'):
             profile['features'][feature] = False
         with tempfile.TemporaryDirectory() as directory:
             file = Path(directory) / 'profile.json'
@@ -61,6 +65,7 @@ class RecommendedInstallationTests(unittest.TestCase):
         self.assertIn('--profile shift', plan)
         self.assertNotIn('--only workspace', plan)
         self.assertNotIn('--only tab-shortcuts', plan)
+        self.assertNotIn('--only desktop-shortcuts', plan)
         self.assertNotIn('--only fonts', plan)
         self.assertNotIn('fc-cache -f', plan)
         self.assertNotIn('omarchy plugin enable menu-selection-memory', plan)

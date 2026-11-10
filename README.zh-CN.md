@@ -17,7 +17,7 @@ python3 install.py --apply
 
 第一条命令预览完整计划。第二条会安装依赖、备份配置、接入软链接与补丁、启用所选输入法方案及插件、刷新字体，并验证 Hyprland 和 Shell 的生效状态。
 
-默认选择集中在 [profiles/recommended.json](profiles/recommended.json)。推荐启用工作区导航、标签页快捷键、中文字体、Caps Lock/Fn、菜单记忆和托盘。双指焦点切换、精确分数缩放、免密锁屏及 VS Code 惯性滚动需要显式选择。
+默认选择集中在 [profiles/recommended.json](profiles/recommended.json)。推荐启用工作区导航、标签页与桌面编辑快捷键、中文字体、Caps Lock/Fn、菜单记忆和托盘。MacBook 截图快捷键、双指焦点切换、精确分数缩放、免密锁屏及 VS Code 惯性滚动需要显式选择。
 
 ```bash
 # 使用原来的左 Shift 输入法切换方案。
@@ -28,6 +28,7 @@ python3 install.py --apply --with-two-finger-focus
 python3 install.py --apply --with-display-controls
 python3 install.py --apply --with-passwordless-lock
 python3 install.py --apply --with-vscode-inertia
+python3 install.py --apply --with-macos-screenshots
 ```
 
 每次完整安装会应用所选输入法方案和双指状态，保留其他已有用户选择。各步骤分别备份，发生错误时停止后续步骤。独立配置和恢复方法见 [安装说明](docs/installation.zh-CN.md)。
@@ -38,6 +39,8 @@ python3 install.py --apply --with-vscode-inertia
 | --- | --- | --- |
 | 工作区导航 | 三／四指离散切换、空工作区与缓出滑动动画 | [工作区导航](features/workspace-navigation/README.zh-CN.md) |
 | 标签页快捷键 | Super+W 关闭标签或文档，Super+T 按应用习惯新建标签或文档 | [标签页快捷键](features/tab-shortcuts/README.zh-CN.md) |
+| 桌面快捷键 | 撤销、重做、保存、查找、打开、打印、浏览器导航与 Super+Backspace 场景删除 | [桌面快捷键](features/desktop-shortcuts/README.zh-CN.md) |
+| 截图快捷键 | 可选 Super+Shift+3/4/5 及剪贴板组合，保留 Omarchy 截图键 | [截图快捷键](features/screenshot-shortcuts/README.zh-CN.md) |
 | 键盘与输入法 | Caps Lock 长短按、Fn 切源、Fn+E 表情，另有左 Shift 方案 | [键盘与输入法](features/keyboard-input/README.zh-CN.md) |
 | 中文字体 | Sarasa UI/Mono SC 与 Noto CJK 回退 | [中文字体](features/chinese-fonts/README.zh-CN.md) |
 | 菜单选择记忆 | 同一菜单和搜索词优先显示上次选择 | [菜单选择记忆](features/menu-selection-memory/README.zh-CN.md) |
@@ -85,6 +88,8 @@ python3 features/keyboard-input/tests/configure.py
 node features/display-controls/tests/scaling.cjs
 node features/vscode-scrolling/tests/configure.cjs
 lua features/tab-shortcuts/tests/shortcuts.lua
+lua features/desktop-shortcuts/tests/shortcuts.lua
+lua features/screenshot-shortcuts/tests/shortcuts.lua
 lua features/window-focus-gestures/tests/loader.lua
 g++ -std=c++20 -Wall -Wextra features/window-focus-gestures/tests/gesture-state.cpp -o /tmp/test-window-focus
 /tmp/test-window-focus
